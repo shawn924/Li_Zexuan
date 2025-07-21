@@ -1,0 +1,12 @@
+--Creating dutchairport table with column name Airports,Periods, Aircraft movement cross country, Aircraft movement local flights, Commercial flights, All flights, Total passengers,Total cargo, Total mail
+
+create table dutchairport(
+		airport varchar(50) primary key,
+		periods varchar(50),
+		cross_country_flights int not null,
+		local_flights int not null,
+		commercial_flights int not null,
+		passenger int not null,
+		cargo int not null,
+		mail int not null
+)

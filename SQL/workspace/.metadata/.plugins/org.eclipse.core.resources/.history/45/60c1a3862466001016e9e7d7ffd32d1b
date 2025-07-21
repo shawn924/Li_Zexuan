@@ -1,0 +1,18 @@
+--1. Retrieve first 10 rows
+select * from dutchairport limit 10;
+
+--2. Filtering - find all commerical flights during 2021-2024
+select sum(commercial_flights)
+from dutchairport d
+where periods in ('2021','2022','2023','2024') and d.airport = 'Total Dutch airports';
+
+--annual summary
+select
+	sum(cross_country_flights) as total_cross_country_flights)
+	sum(local_flights) as total_local_flights
+	sum(commercial_flights) as total_commercial_flights
+	sum(scheduled_flights) as total_scheduled_flights
+	sum(passenger) as total_passenger
+	sum(cargo) as total_cargo
+	sum(mail) as total_mail
+from 
