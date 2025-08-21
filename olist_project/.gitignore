@@ -1,0 +1,43 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.venv/
+venv/
+env/
+*.env
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+*.swp
+
+# ---- Data files ----
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.zip
+
+# ---- Logs ----
+*.log
+
+# ---- Reports / Documents ----
+*.pptx
+*.docx
+*.pbix  
+
+# ---- Images ----
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# ---- System files ----
+.DS_Store
+Thumbs.db
+
