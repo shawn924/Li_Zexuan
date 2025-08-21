@@ -1,0 +1,80 @@
+--1. Retrieve first 10 rows
+select * from dutchairport limit 10;
+
+--2. Filtering - find all commerical flights during 2021-2024
+select sum(commercial_flights)
+from dutchairport d
+where periods in ('2021','2022','2023','2024') and d.airport = 'Total Dutch airports';
+
+--annual summary
+select
+	periods,
+	sum(cross_country_flights) as total_cross_country_flights,
+	sum(local_flights) as total_local_flights,
+	sum(commercial_flights) as total_commercial_flights,
+	sum(scheduled_flights) as total_scheduled_flights,
+	sum(passenger) as total_passenger,
+	sum(cargo) as total_cargo,
+	sum(mail) as total_mail
+from dutchairport
+where airport = 'Total Dutch airports' and periods in ('2021','2022','2023','2024')
+group by periods
+order by periods
+
+
+--calculating year-over-year growth rates of commercial flights and passenger
+with year_totals as (
+	select
+		periods,
+		sum(commercial_flights) as total_commercial_flights,
+		sum(passenger) as total_passenger
+	from dutchairport
+	where airport = 'Total Dutch airports' and periods in ('2020','2021','2022','2023','2024')
+	group by periods
+	order by periods
+)
+select 
+	periods,
+	total_commercial_flights,
+	round((total_commercial_flights-lag(total_commercial_flights) over (order by periods)) * 100 / nullif(lag(total_commercial_flights) over (order by periods),0),2) as commercial_flights_growth_pct,
+	total_passenger,
+	round((total_passenger-lag(total_passenger) over (order by periods)) * 100 / nullif(lag(total_passenger) over (order by periods),0),2) as passenger_growth_pct
+from year_totals
+order by periods;
+
+--52% growth in commerical flights from 2021-2022,and 110% growth in passenger from 2021-2022
+
+--Airport capacity analysis
+with airport_stats as (
+	select
+		airport,
+		sum(commercial_flights) as total_flights,
+		sum(passenger) as total_passenger
+	from dutchairport
+	where airport != 'Total Dutch airports'
+	group by airport
+),
+all_airport as (
+	select
+		SUM(total_passenger) AS overall_passenger,
+    	SUM(total_flights) AS overall_flights
+    from airport_stats
+)
+select
+	a.airport,
+	a.total_passenger,
+	--calculate passenger percentage
+	round(a.total_passenger * 100/ t.overall_passenger,2) as passenger_pct,
+	--ranking by airport
+	dense_rank() over (order by a.total_passenger desc) as passenger_rank,
+	a.total_flights,
+	--calculate flights percentage
+	round(a.total_flights * 100/ t.overall_flights,2) as flights_pct,
+	--ranking by airport
+	dense_rank() over (order by a.total_flights desc) as flights_rank,
+	--compare difference of passenger_rank and flights_rank
+	(dense_rank() OVER (ORDER BY a.total_passenger DESC) - DENSE_RANK() OVER (ORDER BY a.total_flights DESC)) AS rank_difference
+from airport_stats a
+cross join all_airport t
+order by passenger_rank;
+
