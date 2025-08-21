@@ -11,7 +11,7 @@ Welcome to my data portfolio! This repository showcases my data skills using rea
 Analyzed Brazilian e-commerce data from Olist to study order delays and regional trends. Built a complete workflow from data ingestion to visualization.
 
 
-**Repository:** [Olist Project](./Olist-Project)
+**Repository:** [Olist Project](./olist_project)
 
 ## Future Plans
 - Add more data analysis/data pipeline projects
