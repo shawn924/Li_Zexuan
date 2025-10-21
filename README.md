@@ -23,7 +23,7 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 **Description** 
 
 
-**Respository:** [Infomwr Assignment 3](./"Infomwr Assignment 3")
+**Respository:** [Infomwr Assignment 3](./Infomwr%20Assignment%203)
 
 ## Future Plans
 - Add more data analysis/data pipeline projects
@@ -32,4 +32,5 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 ## License
 
 MIT License
+
 
