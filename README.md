@@ -13,9 +13,21 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 
 **Repository:** [Olist Project](./olist_project)
 
+## Coursework
+
+### 1. 
+
+### 2.
+
+### 3. Assignment 3 - supervised learning competition
+**Description** [Infomwr Assignment 3](./Infomwr_Assignment)
+
+
+**Respository:**
 ## Future Plans
 - Add more data analysis/data pipeline projects
 - Expand portfolio with end-to-end analytics workflows
 
 ## License
+
 MIT License
