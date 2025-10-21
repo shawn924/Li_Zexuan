@@ -20,10 +20,11 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 ### 2.
 
 ### 3. Assignment 3 - supervised learning competition
-**Description** [Infomwr Assignment 3](./Infomwr_Assignment)
+**Description** 
 
 
-**Respository:**
+**Respository:** [Infomwr Assignment 3](./"Infomwr Assignment 3")
+
 ## Future Plans
 - Add more data analysis/data pipeline projects
 - Expand portfolio with end-to-end analytics workflows
@@ -31,3 +32,4 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 ## License
 
 MIT License
+
