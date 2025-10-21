@@ -20,7 +20,12 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 ### 2.
 
 ### 3. Assignment 3 - supervised learning competition
-**Description** 
+**Description:**
+This assignment follows the **Common Task Framework (CTF)**.  
+We were provided with a dataset containing student information, and our goal was to **predict academic performance**.  
+
+In this project, we implemented and compared several supervised learning models — **Linear Regression**, **K-Nearest Neighbors (KNN)**, and **Random Forest** — to predict students' outcomes.  
+Finally, we submitted our predictions to the designated “referee” system for evaluation.
 
 
 **Respository:** [Infomwr Assignment 3](./Infomwr%20Assignment%203)
@@ -32,5 +37,6 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 ## License
 
 MIT License
+
 
 
