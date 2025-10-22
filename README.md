@@ -15,7 +15,16 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 
 ## Courseworks
 
-### 1. 
+### 1. Infomwr Assignment 1 - database design and querying
+**Description**
+This assignment focuses on **relational database design, SQL querying, and Python-based data extraction**.  
+We redesigned a company database by expanding the schema with new entities such as **Bill**, **Product**, and **Employee**, and defined both **one-to-many** and **many-to-many** relationships.  
+Normalization was performed to ensure that the database schema satisfies **BCNF**.  
+
+In the querying part, we implemented multiple **SQL queries** involving joins, aggregation, and nested subqueries.  
+Finally, we used **Python (SQLite + Pandas)** to connect to the database, load tables into DataFrames, and applied a **Jaccard similarity function** to identify similar customer records.
+
+**Respository:** [Infomwr Assignment 1](./Infomwr%20Assignment%201)
 
 ### 2.
 
@@ -37,6 +46,7 @@ Finally, we submitted our predictions to the designated “referee” system for
 ## License
 
 MIT License
+
 
 
 
