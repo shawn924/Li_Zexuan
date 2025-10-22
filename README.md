@@ -16,7 +16,7 @@ Analyzed Brazilian e-commerce data from Olist to study order delays and regional
 ## Courseworks
 
 ### 1. Infomwr Assignment 1 - database design and querying
-**Description**
+**Description:**
 This assignment focuses on **relational database design, SQL querying, and Python-based data extraction**.  
 We redesigned a company database by expanding the schema with new entities such as **Bill**, **Product**, and **Employee**, and defined both **one-to-many** and **many-to-many** relationships.  
 Normalization was performed to ensure that the database schema satisfies **BCNF**.  
@@ -26,7 +26,11 @@ Finally, we used **Python (SQLite + Pandas)** to connect to the database, load t
 
 **Respository:** [Infomwr Assignment 1](./Infomwr%20Assignment%201)
 
-### 2.
+### 2. Infomwr Assignment 2: Data Integration & Preparation
+**Description:**
+This project is part of the INFOMDWR course Assignment 2, focusing on **data integration and preparation**. It involves profiling, cleaning, and integrating data from a road safety dataset using Python. The work includes generating summary statistics to understand data characteristics, handling missing and inconsistent values, and merging multiple data sources to produce a coherent, high-quality dataset ready for analysis.
+
+**Respository:** [Infomwr Assignment 2](./Infomwr%20Assignment%202)
 
 ### 3. Infomwr Assignment 3 - supervised learning competition
 **Description:**
@@ -46,6 +50,7 @@ Finally, we submitted our predictions to the designated “referee” system for
 ## License
 
 MIT License
+
 
 
 
