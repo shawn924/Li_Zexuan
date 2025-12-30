@@ -40,8 +40,13 @@ We were provided with a dataset containing student information, and our goal was
 In this project, we implemented and compared several supervised learning models — **Linear Regression**, **K-Nearest Neighbors (KNN)**, and **Random Forest** — to predict students' outcomes.  
 Finally, we submitted our predictions to the designated “referee” system for evaluation.
 
-
 **Respository:** [Infomwr Assignment 3](./Infomwr%20Assignment%203)
+
+### 4. Infomwr Assignment 4 - Text Clustering
+**Description:**
+A comprehensive text clustering project analyzing 5000 IMDb movie reviews. We apply K-means, GMM, agglomerative clustering, and LDA to identify sentiment patterns and thematic structures. The report evaluates model performance using TF-IDF and SBERT embeddings, with comparisons based on silhouette scores, cluster stability, and perplexity to determine the most coherent and stable clustering approach for uncovering meaningful textual groupings.
+
+**Respository:** [Infomwr Assignment 4](./Infomwr%20Assignment%204)
 
 ## Future Plans
 - Add more data analysis/data pipeline projects
@@ -50,6 +55,7 @@ Finally, we submitted our predictions to the designated “referee” system for
 ## License
 
 MIT License
+
 
 
 
