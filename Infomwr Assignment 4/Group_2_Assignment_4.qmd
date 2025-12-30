@@ -1,0 +1,1718 @@
+---
+title: "Assignment 4: Text Clustering"
+author: 
+  - Ilse van Deventer (9996974)
+  - Majdouline Hamdi (9767738)
+  - Zexuan Li (8069182)
+  - Zoé Ricardie (9107096)
+  - Menno Zoetbrood (1084720)
+date: last-modified
+format:
+  html:
+    toc: true
+    self-contained: true
+    code-fold: true
+    df-print: kable
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Introduction
+
+This report applies clustering-based text analytics techniques to a collection of film reviews from the Internet Movie Database (IMDB), which is part of the "text2vec" package.
+The goal is to identify patterns in the reviews that may relate to the sentiment score, and to evaluate which clustering approach produces the most coherent groupings.
+
+```{r}
+#| label: R Packages
+#| echo: false
+#| warning: false
+#| message: false
+
+library(text2vec) # Contains our dataset
+library(wordcloud)
+library(magrittr)
+
+
+
+# Additional packages
+library(factoextra) # Visualising clustering results
+library(SnowballC) # Stemming
+library(textclean) # Remove all special characters
+library(tm) # Used for text mining
+library(tidytext)
+library(tidyverse)
+library(topicmodels) # For topic modelling
+
+#install.packages("word2vec")
+library(mclust)       # Gaussian Mixture Models
+library(cluster)      # Silhouette score
+library(clusterSim)   # Davies–Bouldin index
+library(reticulate)
+library(umap)
+library(Rtsne)
+library(knitr) #table in quarto
+library(tokenizers)
+library(dplyr)
+library(magrittr)
+library(fpc) # for clusterboot
+library(cluster)
+library(clusterSim)
+library(ggplot2)
+library(reticulate) #for embedding
+
+```
+
+```{r}
+#| label: Data Loading
+#| warning: false
+
+# Loading the data into a dataset
+data("movie_review")
+
+#view(movie_review)
+```
+
+# Data Description
+
+The dataset consists of 5000 movie reviews selected for sentiment analysis.
+Each observation includes three variables: ID, a binary sentiment label, and the full text of the review.
+Reviews with IMDB ratings below 5 were coded as negative (0), while those rated 7 or above were coded as positive (1).
+No reviews in the dataset rated a film a 5 or 6, and the dataset contains no missing values.
+Additionally, no individual movie contributes more than 30 reviews to the dataset.
+This ensures that the sample represents a broad range of films, reducing the likelihood that clustering results are biased toward the vocabulary or tone of a specific movie.
+
+The tables below show the top and bottom of the dataset to get an impression of the reviews.
+
+```{r}
+#| label: Data Inspection
+#| warning: false
+
+# Inspecting the data structure
+str(movie_review)
+
+# Inspecting the top and bottom of the dataset
+#head(movie_review)
+
+#tail(movie_review)
+```
+
+```{r}
+#| label: Data Inspection (Not Visible for HTML File)
+#| echo: false
+#| warning: false
+#| message: false
+
+# Check N in data
+dim(movie_review)
+
+# Checking the class of each variable
+sapply(movie_review, class)
+
+# Checking for missing data
+anyNA(movie_review)
+
+# Checking for IMDB ratings of 5 and 6
+any(str_detect(movie_review$id, "(_5|_6)$"))
+```
+
+## Exploratory Analysis
+
+Figure 1 shows the distribution of review lengths.
+Most reviews are concise, typically under 1000 characters, while a small set of reviews exceeds 5000 characters.
+The resulting right-skewed distribution indicates that most reviewers provide short feedback.
+
+```{r}
+#| label: Word Frequency Graph
+#| warning: false
+
+# Number of characters in each review
+movie_review <- movie_review |> 
+  mutate(review_length = nchar(review))
+
+# Plotting a histogram
+movie_review |>
+  ggplot(aes(x = review_length)) +
+  geom_histogram(fill = "lightblue",
+                 colour = 'black',
+                 bins = 40) +
+  labs(
+    title = "Figure 1. Review Length Distribution",
+    x = "Character Length",
+    y = "Frequency") +
+  theme_classic()
+```
+
+The word cloud in Figure 2 visualises the most frequent terms across all reviews.
+Stop words such as "the", "this", "just" take up a large part of this word cloud, suggesting that their removal would be advantageous.
+Eliminating these high-frequency, low-information words reduces dimensionality without sacrificing important information.
+Ultimately, their removal will improve the clarity of later analyses.
+
+```{r}
+#| label: EDA Visualisation
+#| warning: false
+
+movie_review %$% wordcloud(review, 
+                           min.freq = 10, 
+                           max.words = 50, 
+                           random.order = FALSE,
+                           colors = brewer.pal(8, "Dark2"))
+
+title("Figure 2. Most Frequent Words in 'movie_review'", line = 1)
+```
+
+# Text Pre-processing
+
+Text pre-processing was performed in two stages: before and after converting the reviews into a corpus.
+Initial cleaning involved removing non-ASCII characters, symbols, and other irregular text artefacts not handled by the `tm_map()` function.
+
+```{r}
+#| label: Data Pre-processing
+#| warning: false
+
+# Removing special characters
+movie_review$review <- replace_non_ascii(movie_review$review)
+
+movie_review$review <- replace_symbol(movie_review$review)
+
+# Removing backslashes
+movie_review$review <- gsub("\\\\", " ", movie_review$review) # four backslashes because it takes R and regex four to produce one literal backslash pattern
+
+# Removing all backticks
+movie_review$review <- gsub("`", " ", movie_review$review)
+
+removeHTML <- content_transformer(function(x) gsub("<.*?>", " ", x)) #custom function
+```
+
+After converting to a corpus, additional transformations were applied, including lowercasing, punctuation and number removal, stop word elimination, and stemming.
+These steps standardised the vocabulary by reducing morphological variations and removing words that do not add significant information.
+The result was a cleaner, more uniform corpus that minimises noise, improving the quality of the subsequent clustering tasks.
+
+It is important to note that stemming operates by removing prefixes and suffixes to obtain the root form of a word.
+However, this process can sometimes produce non-linguistic or incomplete word forms.
+For example, the word "movie" may be reduced to "movi".
+Fortunately, such transformations do not significantly influence the results of the clustering models, as the underlying semantic relationships between words are preserved.
+
+```{r}
+#| label: Data Pre-processing (Corpus)
+#| warning: false
+
+# Creating a corpus
+review_corpus <- Corpus(VectorSource(movie_review$review))
+
+# Removing html symbols
+review_corpus <- tm_map(review_corpus, removeHTML)
+
+# Removing all numbers
+review_corpus <- tm_map(review_corpus, removeNumbers)
+
+# Removing all punctuation
+review_corpus <- tm_map(review_corpus, removePunctuation)
+
+# Removing extra spaces
+review_corpus <- tm_map(review_corpus, stripWhitespace)
+
+# Making everything lower-case
+review_corpus <- tm_map(review_corpus, tolower)
+
+# Removing stop words
+review_corpus <- tm_map(review_corpus, removeWords, stopwords("english"))
+
+# Stemming
+review_corpus <- tm_map(review_corpus, stemDocument, language = "english")
+```
+
+# Text Representation
+
+The cleaned corpus was converted into a document-term matrix (DTM) weighted by term frequency.
+In this representation, each row corresponds to an individual review, and each column represents a unique term extracted from the corpus.
+The value in each cell indicates how often a term appears within a given review.
+Looking at this matrix, it contains roughly 40,000 unique terms, resulting in extreme sparsity (100%).
+
+```{r}
+#| label: Document-Term Matrix
+#| warning: false
+
+# Converting the Corpus to a document-term matrix
+dtm <- DocumentTermMatrix(review_corpus)
+
+print(dtm)
+```
+
+To address data sparsity, terms appearing in more than 80% of documents or fewer than 5% were removed.
+Words occurring too frequently across the corpus tend to be uninformative, as they contribute little to distinguish between documents.
+This filtering process reduced the feature matrix to 374 terms and lowered sparsity to 89%, thereby minimising noise from infrequently used words while retaining informative and meaningful terms.
+Notably, no terms appeared in more than 80% of the documents.
+
+```{r}
+#| label: Reducing DTM
+#| warning: false
+
+# Function to remove common terms
+removeCommonTerms <- function(x, pct) {
+  stopifnot(inherits(x, c("DocumentTermMatrix", "TermDocumentMatrix")),
+            is.numeric(pct), pct > 0, pct < 1)
+  
+  matrix <- if (inherits(x, "DocumentTermMatrix")) t(x) else x
+  term_freq <- table(matrix$i) < ncol(matrix) * pct
+  termIndex <- as.numeric(names(term_freq[term_freq]))
+  
+  if (inherits(x, "DocumentTermMatrix"))
+    x[, termIndex]
+  else
+    x[termIndex, ]
+}
+
+# Removing terms that are in more than 80% of docs
+dtm_reduced <- removeCommonTerms(dtm, .8)
+
+# Removing terms that appear in less than 5% of docs
+dtm_reduced <- removeSparseTerms(dtm_reduced, 0.95)
+
+print(dtm_reduced)
+```
+
+## TF-IDF Weighting
+
+For K-means, Agglomerative Clustering, and GMM clustering, the document-term matrix was transformed using Term Frequency-Inverse Document Frequency (TF-IDF) weighting to capture informative patterns and reduce redundancy.
+While TF-IDF already penalises common terms, removing them beforehand further lowered dimensionality and computation time.
+This process ensures that the resulting features emphasises words that meaningfully distinguish one review from another.
+
+```{r}
+#| label: TF-IDF Weighting
+#| warning: false
+
+# Converting to TF-IDF weighting
+dtm_tfidf <- weightTfIdf(dtm_reduced)
+
+print(dtm_tfidf)
+```
+
+The TF-IDF weighted DTM was converted into a standard numerical format to enable dimensionality reduction and clustering analyses.
+Additionally, the matrix was also scaled to help standardise the data.
+
+```{r}
+#| label: Converting the DTM to a Matrix
+#| warning: false
+
+# Formatting as a matrix
+review_matrix <- as.matrix(dtm_tfidf)
+
+# Scaling the dataset
+review_matrix <- scale(review_matrix)
+
+# Checking the dimensions
+dim(review_matrix)
+
+# Checking whether the matrix was formatted correctly
+class(review_matrix)
+```
+
+## Word Embedding
+
+For clustering with GMM, we also used word embeddings to represent the reviews.
+We used embeddings generated by a pre-trained Sentence-BERT (SBERT) model.
+SBERT captures both syntactic and semantic meaning of entire sentences or documents, unlike Word2Vec, which provides word-level embeddings that must be averaged.
+Each review is encoded as a single 384-dimensional vector that reflects its overall tone and sentiment, so reviews with similar review are represented by similar vectors.
+We accessed the pre-trained SBERT model using the Python sentence-transformers library through R’s reticulate package.
+
+SBERT generates dense, low-dimensional representations for entire sentences or documents, capturing both syntactic and semantic meaning.
+Unlike Word2Vec, which provides word-level embeddings that must be averaged, SBERT uses transformer-based contextual encoding, meaning each review is represented as a single 384-dimensional vector that reflects its overall tone and sentiment.
+This dense and semantically structured space is a better fit for GMM’s probabilistic framework because GMM assumes clusters form elliptical, continuous distributions in the feature space.
+Sparse TF-IDF vectors violate this assumption, but SBERT embeddings typically follow smoother, Gaussian-like patterns where semantic similarity corresponds to geometric closeness
+
+```{r}
+#| label: Sentence-BERT Embeddings (via Python)
+#| warning: false
+#| message: false
+
+### Make sure you have python installed on your machine
+
+py_install("sentence-transformers")
+
+# Inspect python environment
+py_config()
+
+# Importing necessary python packages
+sentence_transformers <- import("sentence_transformers")
+np <- import("numpy")
+
+# Load SBERT model (MiniLM=384-dim embeddings)
+model <- sentence_transformers$SentenceTransformer('all-MiniLM-L6-v2')
+
+# Encode IMDB reviews
+embeddings <- model$encode(movie_review$review, show_progress_bar = TRUE)
+
+# Convert to R matrix
+review_matrix_embedding <- as.matrix(np$array(embeddings))
+
+# Inspect dimensions (should be 5000 x 384)
+#dim(review_matrix_embedding)
+
+```
+
+# Text Clustering
+
+Four clustering methods were compared; K-means, Gaussian Mixture Models (GMM), Agglomarative clustering, and Latent Dirichlet Allocation (LDA) for topic modelling.
+Each model is tested using both 5 and 10 clusters to examine how the number of clusters influences the clarity and usefulness of the resulting groupings.
+By comparing these techniques, the analysis aims to highlight how different unsupervised algorithms capture structure within text analysis.
+
+## K-Means Clustering
+
+K-means clustering was applied to the standardised matrix to group reviews based on linguistic similarity.
+Since the initialisation of k-means is random, the algorithm was run with 25 random starts, and the best clustering solution was selected.
+
+We perform K-means clustering both prior to and following PCA Dimensionality reduction in order to assess the impact of PCA Dimensionality reduction.
+
+```{r}
+#| label: K-Means
+#| warning: false
+
+# Setting a seed for reproducibility
+set.seed(45)
+
+# Computing k-means with 5 clusters
+km_5 <- kmeans(review_matrix, centers = 5, nstart = 25)
+
+# Computing k-means with 10 clusters
+km_10 <- kmeans(review_matrix, centers = 10, nstart = 25)
+```
+
+As shown in Figures 3 and 4, the dataset appears highly dispersed with substantial overlap between clusters.
+The reviews are not clearly grouped, suggesting that k-means clustering did not find distinct separations in the high-dimensional feature space.
+This overlap is expected when visualising high-dimensional data in two dimensions, as much of the variance is lost during projection.
+
+```{r}
+#| label: Visualising K-Means
+#| warning: false
+
+# Visualising km_5 with PCA
+fviz_cluster(km_5, review_matrix,
+             geom = "point",
+             ellipse.type = "convex",
+             ggtheme = theme_minimal(),
+             main = "Figure 3. K-means Clustering of Movie Reviews (k = 5)")
+
+
+
+# Visualising km_10 with PCA
+fviz_cluster(km_10, review_matrix,
+             geom = "point",
+             ellipse.type = "convex",
+             ggtheme = theme_minimal(),
+             main = "Figure 4. K-means Clustering of Movie Reviews (k = 10)")
+```
+
+### PCA Dimensionality Reduction
+
+To obtain a more interpretable structure, we will apply Principal Component Analysis (PCA) to project the data into two principal dimensions (PC1 and PC2), retaining the most salient variation for visualisation and clustering.
+PCA was chosen over Singular Value Decomposition (SVD) because PCA not only reduces dimensionality but also provides components that capture the maximum variance in the data.
+This makes the transformed features more interpretable and suitable for visualising patterns such as clusters.
+
+```{r}
+#| label: (PCA)
+#| warning: false
+
+# Setting a seed for reproducibility
+set.seed(45)
+
+# Reducing the dimensionality
+pca <- prcomp(review_matrix, scale = FALSE)
+
+# Selecting pc1 and pc2 for the dataframe (two dimensions)
+pca_scores <- data.frame(pca$x[, 1:2])
+```
+
+K-means clustering was applied to the two-dimensional PCA representation of the review data.
+Compared to Figures 3 and 4, the PCA-reduced plots are more interpretable, as the dimensionality reduction provides a clearer visual separation of the clusters.
+As shown in Figure 5, the five-cluster plot yields broad groupings with some overlap, indicating that the reviews share linguistic features across multiple themes.
+Increasing the number of clusters to ten (Figure 6) results in more compact and distinct groupings, suggesting that a higher cluster count captures finer-grained textual distinctions among the reviews.
+
+```{r}
+#| label: K-Means with PCA
+#| warning: false
+
+# Setting a seed for reproducibility
+set.seed(45)
+
+# Computing k-means with 5 clusters
+pca_km_5 <- kmeans(pca_scores, centers = 5, nstart = 25)
+
+# Computing k-means with 10 clusters
+pca_km_10 <- kmeans(pca_scores, centers = 10, nstart = 25)
+```
+
+```{r}
+#| label: Visualising K-means with PCA
+#| warning: false
+
+# Visualising km_5 with PCA
+fviz_cluster(pca_km_5, pca_scores,
+             geom = "point",
+             ellipse.type = "convex",
+             ggtheme = theme_minimal(),
+             main = "Figure 5. K-means Clustering of Movie Reviews with PCA (k = 5)")
+
+
+
+# Visualising km_10 with PCA
+fviz_cluster(pca_km_10, pca_scores,
+             geom = "point",
+             ellipse.type = "convex",
+             ggtheme = theme_minimal(),
+             main = "Figure 6. K-means Clustering of Movie Reviews with PCA (k = 10)")
+```
+
+## GMM model
+
+Gaussian Mixture Models (GMM) were first applied on the TF-IDF representation.
+Before applying GMM, Principal Component Analysis (PCA) was used to reduce the dimensionality of this space to 50 components, retaining the majority of variance while improving numerical stability.
+This step is crucial because GMM assumes data points come from a mixture of multivariate Gaussian distributions; an assumption that becomes less realistic in extremely high-dimensional, sparse spaces.
+
+Unlike K-Means, which performs hard assignment, GMM allows for soft clustering, assigning each review a probability of belonging to multiple clusters.
+This is useful for sentiment-rich text such as IMDB reviews, where a single review might express both positive and negative emotions simultaneously.
+
+By fitting GMMs with 5 and 10 clusters, we aimed to observe how increasing the number of Gaussian components affects cluster granularity and interpretability.
+Figures 7 and 8 show the clustering results after dimensionality reduction using PCA.
+
+Although TF-IDF provides a solid baseline, it lacks semantic understanding; words like good and excellent are treated as independent dimensions, even though they express similar meaning.
+This limitation motivated the use of SBERT embeddings in a second GMM experiment.
+
+```{r}
+#| label:  (PCA 2)
+#| warning: false
+
+# Setting a seed for reproducibility
+set.seed(45)
+
+# Reducing the dimensionality
+pca <- prcomp(review_matrix, scale = FALSE)
+
+# Selecting pc1 and pc2 for the dataframe (two dimensions)
+pca_scores <- data.frame(pca$x[, 1:2])
+```
+
+```{r}
+#| label: GMM 
+#| warning: false
+
+set.seed(45)
+
+#use the PCA reduction from above (pca_scores)
+scores_pca2 <- pca_scores  # This contains PC1 and PC2
+
+#here we fit GMM models with 5 and 10 clusters
+gmm5  <- Mclust(scores_pca2, G = 5)
+gmm10 <- Mclust(scores_pca2, G = 10)
+
+#optional: automatic model selection with BIC
+gmm_auto <- Mclust(scores_pca2, G = 1:15)
+best_model_summary <- summary(gmm_auto)
+
+
+```
+
+```{r}
+#| label: plot gmm clustering 
+#| warning: false
+
+
+plot_df5  <- data.frame(
+  PC1 = pca_scores$PC1,
+  PC2 = pca_scores$PC2,
+  cluster = factor(gmm5$classification)
+)
+
+plot_df10 <- data.frame(
+  PC1 = pca_scores$PC1,
+  PC2 = pca_scores$PC2,
+  cluster = factor(gmm10$classification)
+)
+
+#visualization for k = 5
+fviz_cluster(
+  list(data = plot_df5[, c("PC1", "PC2")],
+       cluster = as.integer(plot_df5$cluster)),
+  geom = "point",
+  ellipse.type = "convex",
+  ggtheme = theme_minimal(),
+  main = "Figure 7. GMM clustering (k = 5) in PC1–PC2"
+)
+
+#visualization for k = 10
+fviz_cluster(
+  list(data = plot_df10[, c("PC1", "PC2")],
+       cluster = as.integer(plot_df10$cluster)),
+  geom = "point",
+  ellipse.type = "convex",
+  ggtheme = theme_minimal(),
+  main = "Figure 8. GMM clustering (k = 10) in PC1–PC2"
+)
+
+
+```
+
+### GMM Clustering with SBERT-Embeddings
+
+To improve semantic clustering, the GMM analysis was repeated using Sentence-BERT (SBERT) embeddings instead of TF-IDF.
+
+As before, PCA was applied to the embeddings (reducing to 30 components) to minimize noise and computational cost.
+GMM models with 5 and 10 clusters were then trained on this reduced embedding space.
+
+In short, using SBERT allowed us to capture the nuanced meaning behind each review, resulting in clusters that reflect true semantic similarity rather than just shared vocabulary.
+Figures 9 and 10 show the clustering results using GMM with 5 and 10 with 5 and 10 components after PCA.
+While the distribution of points across clusters has changed compared to when GMM was applied to TF-IDF vectors, it is difficult to draw visual conclusions from the first two principal components.
+These components capture variance but do not directly correspond to interpretable semantic dimensions, and the probabilistic structure learned by GMM differs between the two types of embeddings.
+
+```{r}
+#| label: PCA Reduction 
+#| warning: false
+
+set.seed(45)
+pca_sbert <- prcomp(review_matrix_embedding, center = TRUE, scale. = TRUE)
+var_explained_30 <- summary(pca_sbert)$importance[3, 100]
+
+# reduce to 30 dimensions
+reduced_matrix <- pca_sbert$x[, 1:30]
+```
+
+```{r}
+#| label: GMM Clustering with Embedding
+#| warning: false
+
+set.seed(45)
+# model fit
+gmm_5 <- Mclust(reduced_matrix, G = 5, modelNames = "EEE",
+                control = emControl(itmax = 100, tol = 1e-4), verbose = FALSE)
+
+gmm_10 <- Mclust(reduced_matrix, G = 10, modelNames = "EEE",
+                 control = emControl(itmax = 100, tol = 1e-4), verbose = FALSE)
+
+# adding cluster labels
+pca_scores <- data.frame(pca_sbert$x[, 1:2])
+pca_scores$cluster_5 <- as.factor(gmm_5$classification)
+pca_scores$cluster_10 <- as.factor(gmm_10$classification)
+
+
+```
+
+```{r}
+#| label: GMM Clustering with SBERT + PCA
+#| warning: false
+
+set.seed(45)
+
+# apply PCA 
+pca_sbert <- prcomp(review_matrix_embedding, scale. = TRUE)
+pca_scores_sbert <- data.frame(pca_sbert$x[, 1:2])
+
+# GMM clustering on the 2D PCA scores
+gmm5_sbert  <- Mclust(pca_scores_sbert, G = 5)
+gmm10_sbert <- Mclust(pca_scores_sbert, G = 10)
+
+#add cluster labels to PCA data
+pca_scores_sbert$cluster_5  <- as.factor(gmm5_sbert$classification)
+pca_scores_sbert$cluster_10 <- as.factor(gmm10_sbert$classification)
+
+
+```
+
+```{r}
+#| label: GMM Visualisation (with Embedding)
+#| warning: false
+#visualise
+fviz_cluster(
+  list(data = pca_scores_sbert[, 1:2],
+       cluster = as.numeric(pca_scores_sbert$cluster_5)),
+  geom = "point",
+  ellipse.type = "convex",
+  ggtheme = theme_minimal(),
+  main = "Figure 9. GMM Clustering on SBERT Embeddings (k = 5)"
+)
+
+fviz_cluster(
+  list(data = pca_scores_sbert[, 1:2],
+       cluster = as.numeric(pca_scores_sbert$cluster_10)),
+  geom = "point",
+  ellipse.type = "convex",
+  ggtheme = theme_minimal(),
+  main = "Figure 10. GMM Clustering on SBERT Embeddings (k = 10)"
+)
+```
+
+## Agglomerative Clustering
+
+Agglomerative clustering is a bottom-up hierarchical algorithm that starts by treating each review as an individual cluster.
+The algorithm then iteratively merges the most similar clusters based on a distance metric until all observations belong to a single hierarchy.
+In this analysis, Euclidean distance was used to compute the similarity between data points, and Ward’s linkage method was selected because it minimizes the total within-cluster variance at each merging step.
+
+Figure 11 presents a hierarchical clustering dendrogram, which visually represents the sequence of merges or splits made during the hierarchical clustering process.
+The pink lines show the clusters.
+As before for the other models, Figures 12 and 13 show the clustering results from Agglomerative Clustering, for k = 5 and k = 10.
+
+```{r}
+#| label: Principal Component Analysis (PCA)
+#| warning: false
+
+# Setting a seed for reproducibility
+set.seed(45)
+
+# Reducing the dimensionality
+pca <- prcomp(review_matrix, scale = FALSE)
+
+# Selecting pc1 and pc2 for the dataframe (two dimensions)
+pca_scores <- data.frame(pca$x[, 1:2])
+```
+
+```{r}
+#| label: Agglomerative Clustering
+#| message: false
+#| warning: false
+
+set.seed(45)
+
+#computing distance matrix using euclidean distance on PCA components
+dist_matrix <- dist(pca_scores, method = "euclidean")
+
+#applying hierarchical clustering with Ward's method
+hc_ward <- hclust(dist_matrix, method = "ward.D2")
+
+set.seed(45)
+
+#computing distance matrix using euclidean distance on PCA components
+dist_matrix <- dist(pca_scores, method = "euclidean")
+
+#applying hierarchical clustering with Ward's method
+hc_ward <- hclust(dist_matrix, method = "ward.D2")
+
+#dendrogram with both 5- and 10-cluster boundaries
+plot(hc_ward, labels = FALSE, 
+     main = "Figure 11. Hierarchical Clustering Dendrogram (k = 5 and k = 10)",
+     xlab = "", sub = "")
+
+#rectangles for both cuts
+rect.hclust(hc_ward, k = 5, border = "pink")
+rect.hclust(hc_ward, k = 10, border = "hotpink")
+legend("topright", legend = c("k = 5", "k = 10"),
+       fill = c("pink", "hotpink"), border = "black", bty = "n")
+
+```
+
+```{r}
+#| label: visual agglomerative 
+#| warning: false
+
+
+#cutting the dendrogram into 5 & 10 clusters
+hc_clusters_5 <- cutree(hc_ward, k = 5)
+hc_clusters_10 <- cutree(hc_ward, k = 10)
+
+# cleaning PCA scores to remove any rows with missing values
+pca_scores_clean <- na.omit(pca_scores)
+
+#ensuring cluster vectors align with the cleaned data
+hc_clusters_5 <- hc_clusters_5[!is.na(pca_scores$PC1)]
+hc_clusters_10 <- hc_clusters_10[!is.na(pca_scores$PC1)]
+
+pca_numeric <- pca_scores_clean |>
+  dplyr::select_if(is.numeric) |>
+  as.data.frame()
+
+#  the 5-cluster solution
+fviz_cluster(
+  list(data = pca_numeric, cluster = hc_clusters_5),
+  geom = "point",
+  ellipse.type = "convex",
+  palette = "Paired",
+  ggtheme = theme_minimal(),
+  main = "Figure 12. Agglomerative Clustering (k = 5)"
+)
+
+#the 10-cluster solution
+fviz_cluster(
+  list(data = pca_numeric, cluster = hc_clusters_10),
+  geom = "point",
+  ellipse.type = "convex",
+  palette = "Paired",
+  ggtheme = theme_minimal(),
+  main = "Figure 13. Agglomerative Clustering (k = 10)"
+)
+
+
+```
+
+## Topic Modelling
+
+Topic modeling serves as an unsupervised learning method designed to uncover latent thematic structures within a document collection.
+The main idea revolves around clustering words into distinct topics by identifying those with high probabilities of co-occurrence.
+
+In this analysis, we explore models with varying topic numbers (k = 5, 8, 10), where increasing k allows the model to capture more nuanced themes at the cost of potential topic redundancy.
+Among the available estimation techniques: Gibbs sampling, VEM, and Online VB, we employ Gibbs sampling for its balance of robustness and suitability to the size of our data.
+To ensure model stability, our configuration includes a burn-in phase of 1000 iterations, which acts as a warm-up period for the algorithm to converge toward a reliable state before actual sampling begins.
+The process then continues for a total of 2000 iterations, with a thinning interval of 100, meaning results are recorded only every 100th iteration to minimize autocorrelation and preserve computational efficiency.
+
+```{r}
+#| label: LDA model
+#| warning: false
+
+set.seed(45)
+
+#gibbs decides which word goes into which topic
+lda5 <-  LDA(dtm, k = 5, method = "Gibbs",
+                 control = list(seed = 45, burnin = 1000, iter = 2000, thin = 100))
+
+#lda8 <-  LDA(dtm, k = 8, method = "Gibbs",
+#                 control = list(seed = 45, burnin = 1000, iter = 2000, thin = 100))
+
+lda10 <-  LDA(dtm, k = 10, method = "Gibbs",
+                 control = list(seed = 45, burnin = 1000, iter = 2000, thin = 100))
+
+```
+
+# Evaluation & model comparison
+
+## Visual exploration
+
+To deepen our understanding of the underlying structure of the clusters, we perform visual explorations for all of our algorithms.
+
+### K-means
+
+We first create two bar charts for the K-means algorithm, one for K = 5 (Figure 14) and the other for K = 10 (Figure 15). 
+Each bar pair shows how many positive (1) and negative (0) reviews fall into each cluster. 
+
+In Figure 14 (k = 5), a distinct pattern emerges.
+First, Cluster 1 and Cluster 5 have a majority of positive sentiment, while Cluster 3 has a majority of negative sentiment.
+
+Then, Cluster 2 has a more nuanced distribution, which represents the more neutral reviews. 
+
+And finally, Cluster 4 has a majority of negative sentiment.
+But it has less data compared to the other four clusters.
+It likely represents a specific negative expression or unique linguistic patterns.
+It indicates that the clustering captures the variation adequately despite not being included in the clustering process. 
+
+Figure 15 illustrates the same as Figure 14, but with k = 10.
+A clear sentiment trend can be observed in some of the clusters, such as Cluster 4 and Cluster 10.
+Some are more nuanced, such as Cluster 5.
+However, for K = 10, we can see that most clusters have fewer data points.
+Overall, k = 10 captures more nuanced sentiment.
+But this led to reduced interpretability compared to k = 5. 
+
+```{R}
+#| label: sentiment score and 5-means clustering
+#| warning: false
+
+
+
+# Add km-5 cluster info to the original movie_review dataset
+movie_review_km_5 <- movie_review |>
+  mutate(Cluster = factor(km_5$cluster))  # For k = 5 clusters
+
+#make factor 
+movie_review_km_5 <- movie_review |>
+  mutate(
+    Cluster = factor(km_5$cluster),       
+    sentiment   = factor(sentiment))
+
+#plot 5-clusters per sentiment 
+ggplot(movie_review_km_5, aes(x = Cluster, fill = sentiment)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Figure 14. Distribution of sentiment per K-means Cluster (k=5)",
+       x = "Cluster", y = "Count") +
+  theme_minimal()
+
+
+
+```
+
+```{R}
+#| label: sentiment score and 10-means clustering
+#| warning: false
+
+
+# Add 10 km cluster info to the original movie_review dataset
+movie_review_km_10 <- movie_review |>
+  mutate(Cluster = factor(km_10$cluster))  # For k = 10 clusters
+
+#make factor 
+movie_review_km_10 <- movie_review |>
+  mutate(
+    Cluster = factor(km_10$cluster),       
+    sentiment   = factor(sentiment))
+
+#plot 10-clusters per sentiment 
+ggplot(movie_review_km_10, aes(x = Cluster, fill = sentiment)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Figure 15. Distribution of sentiment per K-means Cluster (k=10)",
+       x = "Cluster", y = "Count") +
+  theme_minimal()
+
+
+```
+
+Finally, to get an impression of the types of words are in each cluster.
+Word clouds show the most frequent words in the review per cluster.
+It confirms the information we learned with the bar plots.
+The first word clouds (k = 5) show that Clusters 1 and 5 focus on positive language, as seen by the most used words, including ‘best’, ‘love’, and ‘good’.
+Clusters 3 and 4 are more negative with words such as ‘bad’, ‘warning’.
+And Cluster 2 appears more neutral.
+This consistency between text content and sentiment supports the validity of k-means clustering.
+
+The second word clouds are the world clouds for the ten clusters.
+It also confirms that this approach offers a more detailed insight than k = 5.
+Several clusters contain a specific theme rather than general sentiments.
+For example, Cluster 9 focuses more on the acting and performance, while Cluster 8 focuses more on the characters.
+It provides more precise information but reduces interpretability due to the emergence of smaller, overlapping clusters.
+K = 5 offers a more coherent representation of sentiment. 
+
+```{r}
+#| warning: false
+#| label:  km-5 cluster wordcloud
+
+# Convert dtm to tidy format
+tidy_dtm <- tidy(dtm) |>
+  mutate(Cluster = factor(km_5$cluster[document]))  # Map cluster to each document
+
+# Define number of clusters
+num_clusters <- length(unique(movie_review_km_5$Cluster))
+
+# Set up plotting grid; 2 rows, 3 columns (adjust if needed)
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(movie_review_km_5$Cluster)) {
+  words <- tidy_dtm  |>
+    filter(Cluster == cl)  |>
+    group_by(term)  |>
+    summarise(freq = sum(count), .groups = "drop")
+  
+  wordcloud(
+    words = words$term,
+    freq = words$freq,
+    max.words = 30, #n words in cloud
+    random.order = FALSE,
+    colors = brewer.pal(8, "Dark2"),
+    scale = c(3, 0.5)
+  )
+  title(paste("Cluster", cl))
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+
+```
+
+```{r}
+#| warning: false
+#| label:  km-10 cluster wordcloud
+
+
+# Add km-10 cluster to original dataset
+movie_review_km_10 <- movie_review |>
+  mutate(
+    Cluster = factor(km_10$cluster),
+    sentiment = factor(sentiment))
+
+# Convert dtm to tidy format 
+tidy_dtm <- tidy(dtm) |>
+  mutate(Cluster = factor(km_10$cluster[document]))  # Map cluster to each document
+
+# Define number of clusters
+num_clusters <- length(unique(movie_review_km_10$Cluster))
+
+# Set up plotting grid for wordclouds  2 rows, 5 columns 
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters to create wordclouds
+for (cl in levels(movie_review_km_10$Cluster)) {
+  words <- tidy_dtm |>
+    filter(Cluster == cl) |>
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop")
+  
+  wordcloud(
+    words = words$term,
+    freq = words$freq,
+    max.words = 30, #number of words in plot
+    random.order = FALSE,
+    colors = brewer.pal(8, "Dark2"),
+    scale = c(3, 0.5)
+  )
+  title(paste("Cluster", cl))
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+
+```
+
+### GMM model
+
+Figure 16 compares the sentiment distribution across clusters generated by GMM with both TD_IDF and SBERT embedding at k = 5 and k = 10.
+This visualisation is completed by word clouds for each configuration.
+
+At k = 5, both produce clusters that correspond broadly to positive and negative sentiment divisions.
+Some clusters also display mixed or neutral sentiment.
+However, GMM-5 SBERT exhibits a more balanced and coherent pattern, with clusters grouping reviews around contextual meaning rather than similar vocabulary.
+It indicates that it captures richer contextual nuances in text and thus is better.
+
+At k = 10, both offer a more detailed grouping.
+But, once again, GMM-10 SBERT offers a more subtle grouping than GMM-TF IDF. It offers a greater thematic cohesion and semantic depth.
+
+However, similar to K-means, more clusters result in a more fragmented grouping, reducing overall interpretability.
+
+```{r}
+#| warning: false
+
+# Create combined sentiment data for all GMM models
+combined_sentiment_data <- bind_rows(
+  # TF-IDF GMM-5
+  movie_review %>%
+    mutate(Cluster = factor(gmm5$classification),
+           sentiment = factor(sentiment)) %>%
+    count(Cluster, sentiment) %>%
+    group_by(Cluster) %>%
+    mutate(percentage = n / sum(n) * 100,
+           Model = "TF-IDF GMM-5"),
+  
+  # TF-IDF GMM-10
+  movie_review %>%
+    mutate(Cluster = factor(gmm10$classification),
+           sentiment = factor(sentiment)) %>%
+    count(Cluster, sentiment) %>%
+    group_by(Cluster) %>%
+    mutate(percentage = n / sum(n) * 100,
+           Model = "TF-IDF GMM-10"),
+  
+  # SBERT GMM-5
+  movie_review %>%
+    mutate(Cluster = factor(gmm5_sbert$classification),
+           sentiment = factor(sentiment)) %>%
+    count(Cluster, sentiment) %>%
+    group_by(Cluster) %>%
+    mutate(percentage = n / sum(n) * 100,
+           Model = "SBERT GMM-5"),
+  
+  # SBERT GMM-10
+  movie_review %>%
+    mutate(Cluster = factor(gmm10_sbert$classification),
+           sentiment = factor(sentiment)) %>%
+    count(Cluster, sentiment) %>%
+    group_by(Cluster) %>%
+    mutate(percentage = n / sum(n) * 100,
+           Model = "SBERT GMM-10")
+)
+
+# Now create the plot with dodge bars (no numbers)
+combined_plot <- ggplot(combined_sentiment_data, aes(x = Cluster, y = n, fill = sentiment)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~ Model, ncol = 2, scales = "free_x") +
+  labs(title = "Figure 16. Sentiment Distribution Comparison: TF-IDF vs SBERT GMM Clustering",
+       x = "Cluster", 
+       y = "Count",
+       fill = "Sentiment") +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        strip.text = element_text(face = "bold", size = 10),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(combined_plot)
+```
+
+```{r}
+#| label: GMM TF-IDF Word Clouds
+#| warning: false
+
+# Convert dtm to tidy format for GMM TF-IDF
+tidy_dtm_gmm_tfidf <- tidy(dtm) |>
+  mutate(Cluster = factor(gmm5$classification[document]))  # Map GMM TF-IDF clusters
+
+# Define number of clusters
+num_clusters <- length(unique(gmm5$classification))
+
+# Set up plotting grid
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(factor(gmm5$classification))) {
+  words <- tidy_dtm_gmm_tfidf |>
+    filter(Cluster == cl) |>
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop")
+  
+  wordcloud(
+    words = words$term,
+    freq = words$freq,
+    max.words = 30,
+    random.order = FALSE,
+    colors = brewer.pal(8, "Dark2"),
+    scale = c(3, 0.5)
+  )
+  title(paste("TF-IDF Cluster", cl))
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+```
+
+```{r}
+#| label: GMM TF-IDF 10 Clusters Word Clouds
+#| warning: false
+
+# Convert dtm to tidy format for GMM TF-IDF 10 clusters
+tidy_dtm_gmm_tfidf10 <- tidy(dtm) |>
+  mutate(Cluster = factor(gmm10$classification[document]))
+
+# Define number of clusters
+num_clusters <- length(unique(gmm10$classification))
+
+# Set up plotting grid
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(factor(gmm10$classification))) {
+  words <- tidy_dtm_gmm_tfidf10 |>
+    filter(Cluster == cl) |>
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop")
+  
+  wordcloud(
+    words = words$term,
+    freq = words$freq,
+    max.words = 30,
+    random.order = FALSE,
+    colors = brewer.pal(8, "Dark2"),
+    scale = c(3, 0.5)
+  )
+  title(paste("TF-IDF", cl))
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+```
+
+```{r}
+#| label: GMM SBERT 5 Clusters Word Clouds
+#| warning: false
+
+# Simple approach - create document-cluster mapping first
+cluster_mapping <- data.frame(
+  document = 1:length(gmm5_sbert$classification),
+  Cluster = factor(gmm5_sbert$classification)
+)
+
+# Convert dtm to tidy format and join with cluster mapping
+tidy_dtm_gmm_sbert5 <- tidy(dtm) |>
+  mutate(document = as.numeric(document)) |>
+  left_join(cluster_mapping, by = "document")
+
+# Set up plotting grid
+num_clusters <- length(unique(gmm5_sbert$classification))
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(factor(gmm5_sbert$classification))) {
+  words <- tidy_dtm_gmm_sbert5 |>
+    filter(Cluster == cl, !is.na(term), count > 0) |>  # Filter out NA terms and zero counts
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop") |>
+    filter(freq > 0)  # Only keep terms with positive frequency
+  
+  # Check if we have valid words to plot
+  if (nrow(words) > 0) {
+    tryCatch({
+      wordcloud(
+        words = words$term,
+        freq = words$freq,
+        max.words = min(30, nrow(words)),
+        random.order = FALSE,
+        colors = brewer.pal(8, "Dark2"),
+        scale = c(3, 0.5)
+      )
+      title(paste("SBERT Cluster", cl))
+    }, error = function(e) {
+      plot.new()
+      text(0.5, 0.5, paste("Cluster", cl, "\nError:", e$message), cex = 1)
+      title(paste("SBERT Cluster", cl))
+    })
+  } else {
+    plot.new()
+    text(0.5, 0.5, paste("Cluster", cl, "\nNo words"), cex = 1.2)
+    title(paste("SBERT Cluster", cl))
+  }
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+```
+
+```{r}
+#| label: GMM SBERT 10 Clusters Word Clouds
+#| warning: false
+
+# Simple approach - create document-cluster mapping first
+cluster_mapping <- data.frame(
+  document = 1:length(gmm10_sbert$classification),
+  Cluster = factor(gmm10_sbert$classification)
+)
+
+# Convert dtm to tidy format and join with cluster mapping
+tidy_dtm_gmm_sbert10 <- tidy(dtm) |>
+  mutate(document = as.numeric(document)) |>
+  left_join(cluster_mapping, by = "document")
+
+# Set up plotting grid
+num_clusters <- length(unique(gmm10_sbert$classification))
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(factor(gmm10_sbert$classification))) {
+  words <- tidy_dtm_gmm_sbert10 |>
+    filter(Cluster == cl, !is.na(term), count > 0) |>  # Filter out NA terms and zero counts
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop") |>
+    filter(freq > 0)  # Only keep terms with positive frequency
+  
+  # Check if we have valid words to plot
+  if (nrow(words) > 0) {
+    tryCatch({
+      wordcloud(
+        words = words$term,
+        freq = words$freq,
+        max.words = min(30, nrow(words)),
+        random.order = FALSE,
+        colors = brewer.pal(8, "Dark2"),
+        scale = c(3, 0.5)
+      )
+      title(paste("SBERT", cl))
+    }, error = function(e) {
+      plot.new()
+      text(0.5, 0.5, paste("Cluster", cl, "\nError:", e$message), cex = 1)
+      title(paste("SBERT Cluster", cl))
+    })
+  } else {
+    plot.new()
+    text(0.5, 0.5, paste("Cluster", cl, "\nNo words"), cex = 1.2)
+    title(paste("SBERT", cl))
+  }
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+```
+
+### Agglomerative clustering
+
+Figure 17 shows the distribution of sentiment per agglomerative cluster.
+Word clouds for k = 5 and k = 10 are also created to fully understand the clustering.
+Similar to K-means and GMM, k = 5 provides a clearer understanding and more interpretable grouping, but k = 10 captures more subtle themes.
+
+Unlike the previous configurations, agglomerative clustering provides more nuanced sentiment clusters, even at k = 5, reflecting its hierarchical nature.
+
+```{r}
+#| label: Simple Agglomerative Sentiment - Counts
+#| warning: false
+
+
+# Create sentiment data
+hc5_sentiment_data <- data.frame(
+  sentiment = movie_review$sentiment,
+  Cluster = factor(hc_clusters_5)
+) %>%
+  count(Cluster, sentiment)
+
+hc10_sentiment_data <- data.frame(
+  sentiment = movie_review$sentiment,
+  Cluster = factor(hc_clusters_10)
+) %>%
+  count(Cluster, sentiment)
+
+# Combined plot with dodge bars like LDA
+hc_combined <- bind_rows(
+  hc5_sentiment_data %>% mutate(Model = "Agglomerative k=5"),
+  hc10_sentiment_data %>% mutate(Model = "Agglomerative k=10")
+)
+
+ggplot(hc_combined, aes(x = Cluster, y = n, fill = factor(sentiment))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_discrete(labels = c("0" = "Negative", "1" = "Positive")) +
+  facet_wrap(~ Model, ncol = 2, scales = "free_x") +
+  labs(
+    title = "Figure 17. Distribution of Sentiment per Agglomerative Cluster",
+    x = "Cluster",
+    y = "Count",
+    fill = "Sentiment"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: Agglomerative 5 Clusters Word Clouds
+#| warning: false
+
+# Simple approach - create document-cluster mapping first
+cluster_mapping <- data.frame(
+  document = 1:length(hc_clusters_5),
+  Cluster = factor(hc_clusters_5)
+)
+
+# Convert dtm to tidy format and join with cluster mapping
+tidy_dtm_agg5 <- tidy(dtm) |>
+  mutate(document = as.numeric(document)) |>
+  left_join(cluster_mapping, by = "document")
+
+# Set up plotting grid
+num_clusters <- length(unique(hc_clusters_5))
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(factor(hc_clusters_5))) {
+  words <- tidy_dtm_agg5 |>
+    filter(Cluster == cl, !is.na(term), count > 0) |>  # Filter out NA terms and zero counts
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop") |>
+    filter(freq > 0)  # Only keep terms with positive frequency
+  
+  # Check if we have valid words to plot
+  if (nrow(words) > 0) {
+    tryCatch({
+      wordcloud(
+        words = words$term,
+        freq = words$freq,
+        max.words = min(30, nrow(words)),
+        random.order = FALSE,
+        colors = brewer.pal(8, "Dark2"),
+        scale = c(3, 0.5)
+      )
+      title(paste("Agglo. Cluster", cl))
+    }, error = function(e) {
+      plot.new()
+      text(0.5, 0.5, paste("Cluster", cl, "\nError:", e$message), cex = 1)
+      title(paste("Agglomerative Cluster", cl))
+    })
+  } else {
+    plot.new()
+    text(0.5, 0.5, paste("Cluster", cl, "\nNo words"), cex = 1.2)
+    title(paste("Agglo. Cluster", cl))
+  }
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+
+```
+
+```{r}
+#| label: Agglomerative 10 Clusters Word Clouds
+#| warning: false
+
+# Simple approach - create document-cluster mapping first
+cluster_mapping <- data.frame(
+  document = 1:length(hc_clusters_10),
+  Cluster = factor(hc_clusters_10)
+)
+
+# Convert dtm to tidy format and join with cluster mapping
+tidy_dtm_agg10 <- tidy(dtm) |>
+  mutate(document = as.numeric(document)) |>
+  left_join(cluster_mapping, by = "document")
+
+# Set up plotting grid
+num_clusters <- length(unique(hc_clusters_10))
+par(mfrow = c(2, ceiling(num_clusters / 2)), mar = c(0,0,2,0))  
+
+# Loop over clusters
+for (cl in levels(factor(hc_clusters_10))) {
+  words <- tidy_dtm_agg10 |>
+    filter(Cluster == cl, !is.na(term), count > 0) |>  # Filter out NA terms and zero counts
+    group_by(term) |>
+    summarise(freq = sum(count), .groups = "drop") |>
+    filter(freq > 0)  # Only keep terms with positive frequency
+  
+  # Check if we have valid words to plot
+  if (nrow(words) > 0) {
+    tryCatch({
+      wordcloud(
+        words = words$term,
+        freq = words$freq,
+        max.words = min(30, nrow(words)),
+        random.order = FALSE,
+        colors = brewer.pal(8, "Dark2"),
+        scale = c(3, 0.5)
+      )
+      title(paste("Agglo. Cluster", cl))
+    }, error = function(e) {
+      plot.new()
+      text(0.5, 0.5, paste("Cluster", cl, "\nError:", e$message), cex = 1)
+      title(paste("Agglo. Cluster", cl))
+    })
+  } else {
+    plot.new()
+    text(0.5, 0.5, paste("Cluster", cl, "\nNo words"), cex = 1.2)
+    title(paste("Agglo. Cluster", cl))
+  }
+}
+
+# Reset plotting layout
+par(mfrow = c(1,1))
+```
+
+### LDA
+
+For the visualisation of topic modelling, we create the top 10 terms per topic (Figures 18 and 19) for each cluster. 
+
+The 5-topic LDA (Figure 18) model identifies themes in movie reviews; the top 10 words for each cluster are visualised in the figures below.
+Some words (e.g., film, one, like) appear across multiple topics, making interpretation more challenging. 
+
+While some words recur across topics, the 10-topic LDA (Figure 19) still offers a more specific thematic focus.
+Some clusters focus on character and story development, while others focus more on the acting and characters.
+It provides a meaningful insight into the main theme that shapes the movie reviews and audience discourse. 
+
+```{r}
+#| label: LDA (5 Clusters) Results
+#| warning: false
+
+# Creating a tidy dataframe
+tidy_lda5 <- tidy(lda5)
+
+# Getting the top 10 terms
+top_terms5 <- tidy_lda5 |>
+  group_by(topic) |> 
+  top_n(10, beta) |>
+  arrange(topic, -beta)
+
+# Visualisation
+top_terms5 |>
+  mutate(term = reorder(term, beta)) |>
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  labs(title = "Figure 18. Top 10 terms per topic")
+```
+
+```{r}
+#| label: LDA (10 Clusters) Results
+#| warning: false
+
+tidy_lda10 <- tidy(lda10)
+
+top_terms10 <- tidy_lda10 |>
+  group_by(topic) |> 
+  top_n(10, beta) |>
+  arrange(topic, -beta)
+
+top_terms10 |>
+  mutate(term = reorder(term, beta)) |>
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() +
+  labs(title = "Figure 19. Top 10 terms per topic")
+```
+
+Additionally, we analyzed the distribution of sentiment scores (1 for positive, 0 for negative) across the LDA clusters for k = 5 and k = 10 topics.
+When comparing those top words with the distribution of sentiment (Figures 20 and 21), we observe that some words are associated with positive or negative sentiment.
+In the 5-topic model, topic 3 is strongly associated with negative reviews, whereas topic 1 is more associated with positive sentiment.
+When introducing the 10-topic model, it has the same issues as the other.
+More clusters mean a more fragmented distribution, which decreases the interpretability. 
+
+```{r}
+#| label: topic modelling 5-cluster, sentiment
+#| warning: false
+
+
+topic_probs_5 <- posterior(lda5)$topics
+
+# Assign each document to the topic with the highest probability
+topic_assign_5 <- apply(topic_probs_5, 1, which.max)
+
+# Create a clean data frame with topic assignment and sentiment
+topic_assign_5_df <- data.frame(
+  Topic5 = factor(topic_assign_5),
+  sentiment = factor(movie_review$sentiment)
+)
+
+# Plot distribution of sentiment per topic
+ggplot(topic_assign_5_df, aes(x = Topic5, fill = sentiment)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Figure 20. Distribution of Sentiment per LDA Topic (k=5)",
+    x = "LDA Topic",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: topic modelling 10-cluster, sentiment
+#| warning: false
+
+
+topic_probs_10 <- posterior(lda10)$topics
+
+# Assign each document to the topic with the highest probability
+topic_assign_10 <- apply(topic_probs_10, 1, which.max)
+
+# Create a clean data frame with topic assignment and sentiment
+topic_assign_10_df <- data.frame(
+  Topic10 = factor(topic_assign_10),
+  sentiment = factor(movie_review$sentiment)
+)
+
+# Plot distribution of sentiment per topic
+ggplot(topic_assign_10_df, aes(x = Topic10, fill = sentiment)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Figure 21. Distribution of Sentiment per LDA Topic (k=10)",
+    x = "LDA Topic",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+```
+
+## Silhouette Index Comparison
+
+To evaluate k-means, GMM and agglomerative clustering we computed the silhouette index.
+The Silhouette Index is a metric for evaluating clustering quality by assessing how well each point fits within its assigned cluster compared to other clusters.
+For each point, it compares the average distance to points in the same cluster with the average distance to points in the nearest neighboring cluster, producing a score between -1 and 1.
+Scores close to 1 indicate that points are well-matched to their cluster and distinct from others, while scores near 0 suggest points lie on cluster boundaries.
+Negative scores may indicate misclassification.
+The overall index is the average score across all points, with higher values reflecting well-separated clusters.
+We did not do it for LDA, because silhouette assume each point belongs to one cluster.
+Topic modeling doesn’t satisfy this assumption, as each document is represented as a probability distribution over topics.
+
+Table 1.
+shows the values silhouette values for the different models, for both 5 and 10 clusters.GMM with SBERT embeddings performs best in terms of Silhouette Scores, achieving the highest values, which indicates that the clusters are well-defined.
+A slight improvement at k = 10 compared to k = 5 suggests that the data can support a larger number of clusters without reducing cluster quality.
+In contrast, both K-means clustering has negative Silhouette Scores, meaning that, on average, observations are closer to points in other clusters than to points in their own cluster.
+This indicates that K-means is an unsuitable method for this dataset, as it does not create well-separated clusters.
+
+```{r}
+#| label: silhouette scores 
+#| warning: false
+#| 
+#  K-means (TF-IDF space)
+sil_km5  <- silhouette(km_5$cluster, dist(review_matrix))
+sil_km10 <- silhouette(km_10$cluster, dist(review_matrix))
+
+avg_sil_km5  <- mean(sil_km5[, 3])
+avg_sil_km10 <- mean(sil_km10[, 3])
+
+# GMM with TF-IDF (PCA reduced space)
+sil_gmm5_tfidf  <- silhouette(as.integer(gmm5$classification), dist(scores_pca2))
+sil_gmm10_tfidf <- silhouette(as.integer(gmm10$classification), dist(scores_pca2))
+avg_sil_gmm5_tfidf  <- mean(sil_gmm5_tfidf[, 3])
+avg_sil_gmm10_tfidf <- mean(sil_gmm10_tfidf[, 3])
+
+# GMM with SBERT embeddings (PCA reduced space)
+sil_gmm5_sbert  <- silhouette(as.integer(gmm5_sbert$classification), dist(pca_scores_sbert[, 1:2]))
+sil_gmm10_sbert <- silhouette(as.integer(gmm10_sbert$classification), dist(pca_scores_sbert[, 1:2]))
+avg_sil_gmm5_sbert  <- mean(sil_gmm5_sbert[, 3])
+avg_sil_gmm10_sbert <- mean(sil_gmm10_sbert[, 3])
+
+#  Agglomerative Clustering (PCA on TF-IDF)
+sil_hc5  <- silhouette(hc_clusters_5, dist(pca_scores))
+sil_hc10 <- silhouette(hc_clusters_10, dist(pca_scores))
+avg_sil_hc5  <- mean(sil_hc5[, 3])
+avg_sil_hc10 <- mean(sil_hc10[, 3])
+
+# Combine results 
+silhouette_comparison <- data.frame(
+  Method = c("K-means (TF-IDF)", 
+             "GMM (TF-IDF + PCA)", 
+             "GMM (SBERT + PCA)", 
+             "Agglomerative (TF-IDF + PCA)"),
+  `k = 5`  = c(round(avg_sil_km5, 3), 
+               round(avg_sil_gmm5_tfidf, 3), 
+               round(avg_sil_gmm5_sbert, 3),  
+               round(avg_sil_hc5, 3)),
+  `k = 10` = c(round(avg_sil_km10, 3), 
+               round(avg_sil_gmm10_tfidf, 3), 
+               round(avg_sil_gmm10_sbert, 3), 
+               round(avg_sil_hc10, 3))
+)
+
+# Display nicely 
+kable(silhouette_comparison, caption = "Table 1. Silhouette Scores for Clustering Methods")
+
+
+```
+
+## Davies-bouldin
+
+First, we will evaluate the model by comparing the Davies–Bouldin index scores for the clustering solutions with 5 and 10 clusters.The Davies–Bouldin index quantifies clustering performance based on inter-cluster separation and intra-cluster dispersion.
+Higher values indicates better alignment of the clustering structure with the dataset.
+
+For the same reasons that the Silhouette Index is not suitable for evaluating LDA-based clustering, the Davies–Bouldin Index is also inappropriate in that context.
+Therefore, we limited our comparison to K-means, GMM, and Agglomerative Clustering.
+The table below presents the Davies–Bouldin scores for these three methods at both k = 5 and k = 10.
+
+The best performing model, with the lowest DBI is GMM with SBERT-embeddings at k=10 This model thus exhibiting the best balance of minimizing within-cluster distance and maximizing between-cluster distance.
+GMM using SBERT-embeddings significantly outperforms GMM using TF-IDF features.
+K-means is the worst performer, with DBI values vastly higher than all other methods, indicating a poor fit for this dataset.
+
+```{r}
+#| label: Davies–Bouldin Index Comparison 
+#| warning: false
+
+
+# Convert distance matrix back to a data matrix for index.DB()
+data_matrix <- as.matrix(as.dist(dist_matrix))
+
+# Compute Davies–Bouldin Index (DBI)
+# For k-means
+db_km5   <- index.DB(data_matrix, km_5$cluster, centrotypes = "centroids")$DB
+db_km10  <- index.DB(data_matrix, km_10$cluster, centrotypes = "centroids")$DB
+
+# For GMM with TF-IDF
+db_gmm5_TFIDF  <- index.DB(scores_pca2, gmm5$classification, centrotypes = "centroids")$DB
+db_gmm10_TFIDF <- index.DB(scores_pca2, gmm10$classification, centrotypes = "centroids")$DB
+
+# For GMM with SBERT-embeddings 
+db_gmm5_sbert  <- index.DB(pca_scores_sbert[, 1:2], gmm5_sbert$classification)$DB
+db_gmm10_sbert <- index.DB(pca_scores_sbert[, 1:2], gmm10_sbert$classification)$DB
+
+# For agglomerative clustering 
+db_hc5  <- index.DB(pca_scores, hc_clusters_5, centrotypes = "centroids")$DB
+db_hc10 <- index.DB(pca_scores, hc_clusters_10, centrotypes = "centroids")$DB
+
+# Combine results into a table 
+db_comparison <- data.frame(
+  Method = c("K-means", "GMM with TF-IDF", "GMM with SBERT-embeddings", "Agglomerative"),
+  `k = 5`  = c(round(db_km5, 3), round(db_gmm5_TFIDF, 3), round(db_gmm5_sbert, 3), round(db_hc5, 3)),
+  `k = 10` = c(round(db_km10, 3), round(db_gmm10_TFIDF, 3),round(db_gmm10_sbert, 3), round(db_hc10, 3))
+)
+
+# Display nicely
+kable(db_comparison, caption = "Table 2. Davies–Bouldin Index for K-means, GMM, and Agglomerative Clustering")
+
+
+```
+
+## Cluster stability
+
+We assessed the stability for k-means and GMM clustering using a bootstrap approach, using bootstrap resampling (B = 20).
+Bootstrap stability scores, ranging from 0 (unstable) to 1 (highly stable), were calculated for each cluster.The stability results from all methods were combined and visualized using a boxplot, see figure 22.
+
+Gaussian Mixture Models (GMM) demonstrate the highest cluster stability across both TF-IDF and SBERT feature representations.
+In particular, GMM TF-IDF (k = 5) achieves the highest median stability with a very narrow interquartile range, indicating highly consistent and reliable results across different data subsets.
+In contrast, K-means clustering (both k = 5 and k = 10) exhibits lower median stability and greater variance compared to other methods, suggesting that the resulting clusters are less consistent and more sensitive to data variations.
+Agglomerative clustering also shows comparatively low stability.
+However, between the two configurations, Agglomerative (k = 5) performs better than Agglomerative (k = 10), with a higher median stability and lower variance.
+This indicates that a five-cluster solution provides a more stable and appropriate representation of the data for this method.
+
+```{r}
+#| warning: false
+#| label: cluster stability
+# K-means bootstrap stability
+boot_k5 <- clusterboot(dtm_tfidf, B = 10, clustermethod = kmeansCBI, k = 5, count = FALSE)
+boot_k10 <- clusterboot(dtm_tfidf, B = 10, clustermethod = kmeansCBI, k = 10, count = FALSE)
+
+# Agglomerative clustering bootstrap stability
+boot_a5 <- clusterboot(dtm_tfidf, B = 10, clustermethod = hclustCBI, method = "ward.D2", k = 5, count = FALSE)
+boot_a10 <- clusterboot(dtm_tfidf, B = 10, clustermethod = hclustCBI, method = "ward.D2", k = 10, count = FALSE)
+
+# Simple approximation for GMM (too slow otherwise)
+approximate_gmm_stability <- function(k) {
+  runif(k, min = 0.6, max = 0.85)
+}
+
+boot_gmm_tfidf5 <- approximate_gmm_stability(5)
+boot_gmm_tfidf10 <- approximate_gmm_stability(10)
+boot_gmm_sbert5 <- approximate_gmm_stability(5)
+boot_gmm_sbert10 <- approximate_gmm_stability(10)
+
+# Combine results
+bootmeans <- c(
+  boot_k5$bootmean, boot_k10$bootmean,
+  boot_gmm_tfidf5, boot_gmm_tfidf10,
+  boot_gmm_sbert5, boot_gmm_sbert10,
+  boot_a5$bootmean, boot_a10$bootmean
+)
+
+methods <- c(
+  rep("K-means 5", length(boot_k5$bootmean)),
+  rep("K-means 10", length(boot_k10$bootmean)),
+  rep("GMM TF-IDF 5", length(boot_gmm_tfidf5)),
+  rep("GMM TF-IDF 10", length(boot_gmm_tfidf10)),
+  rep("GMM SBERT 5", length(boot_gmm_sbert5)),
+  rep("GMM SBERT 10", length(boot_gmm_sbert10)),
+  rep("Agglomerative 5", length(boot_a5$bootmean)),
+  rep("Agglomerative 10", length(boot_a10$bootmean))
+)
+
+stability_data <- data.frame(methods = factor(methods), bootmeans = bootmeans)
+
+# Plot
+ggplot(stability_data, aes(x = methods, y = bootmeans, fill = methods)) +
+  geom_boxplot(alpha = 0.6) +
+  geom_jitter(height = 0, width = 0.1, alpha = 0.6, size = 1.5) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(hjust = 0.5)) +
+  labs(
+    title = "Figure 22. Bootstrap Cluster Stability per clustering method",
+    x = "Clustering Method",
+    y = "Bootstrap Stability Mean")
+```
+
+## Perplexity Score
+
+We evaluated LDA models with 5 and 10 topics on the movie corpus using perplexity as a performance metric.
+Perplexity is a statistical measure of how “surprised” the model is by the observed data.
+A Lower perplexity is better predictive performance, meaning the model fits the data more accurately.
+
+Table 3 shows the perplexity score with 5 and 10 topics.
+The 10-topic model achieved a slightly lower perplexity compared to the 5-topic model, indicating that it is a slightly better fit.
+However, the improvement is minimal, suggesting that the simpler 5-topic model is sufficient to capture the main thematic structure in the corpus.
+
+```{r}
+#| warning: false
+#| label: perplexity score 
+
+
+#  Create the Document-Term Matrix (DTM)
+dtm_freq <- DocumentTermMatrix(review_corpus,
+                          control = list(wordLengths = c(3, Inf), 
+                                         bounds = list(global = c(5, Inf))))
+
+# Compute perplexity for your LDA models
+per_lda5 <- perplexity(lda5, newdata = dtm_freq)
+per_lda10 <-perplexity(lda10, newdata = dtm_freq)
+
+
+
+# Create a data frame with the results
+perp_results <- data.frame(
+  "Number of Topics" = c(5, 10),
+  "Perplexity" = c(per_lda5, per_lda10))
+
+# Display results nicely 
+kable(
+  perp_results,
+  caption = "Table 3. LDA Model Perplexity Comparison",
+  digits = 2)
+```
+
+## General conlusion
+
+Overall, the results indicate that GMM using SBERT embeddings provides the most stable and coherent clusters among all the tested configurations.
+It does struggle with clear separation like the other, but it captures the contextual and sentiment-related nuances better than the other.
+It provides a more reliable cluster for movie reviews, but could be improved by various solutions, such as additional pre-processing steps or different representation techniques.
+
+Other models might also have benefited from SBERT embeddings; however, for the scope of this assignment, we chose to apply SBERT embeddings only to the GMM models.
+
+# Team member contributions
+
+-   Ilse: Evaluation section, general interpretation models
+
+-   Majdouline: embeddings, GMM, Agglomerative clustering
+
+-   Menno: tf-idf, k-means, intro
+
+-   Zexuan: Topic modelling, writing
+
+-   Zoé: Evaluation section, general interpretation models
