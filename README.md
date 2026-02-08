@@ -10,8 +10,13 @@ Welcome to my data portfolio! This repository showcases my data skills using rea
 **Description:**  
 Analyzed Brazilian e-commerce data from Olist to study order delays and regional trends. Built a complete workflow from data ingestion to visualization.
 
-
 **Repository:** [Olist Project](./olist_project)
+
+### 2. Spatial Project – Using Cellular Automata Model to simulate housing density
+**Description:** 
+This research develops a Cellular Automata (CA) model to simulate and forecast housing density changes in Leidsche Rijn, Utrecht, under Transit-Oriented Development (TOD) policies. The model is trained on 2010&2015 land-use data, validated with 2017 data, and used to project development up to 2040. Two scenarios—baseline and TOD—are compared to assess spatial impacts of the proposed policy. The study includes full workflow: data preprocessing, logistic regression-based transition modeling, CA simulation, policy integration, and visualization of results.
+
+**Repository:** [Spatial_Project_Cellular_Automata](./Spatial_Project_Cellular_Automata)
 
 ## Courseworks
 
