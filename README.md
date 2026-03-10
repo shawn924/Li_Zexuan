@@ -68,6 +68,12 @@ This project implements a transformer-based chess player for a tournament framew
 
 **Respository:** [INFOMTALC_Assignment1_chessbot](./INFOMTALC_Assignment1_chessbot)
 
+### 6. INFOMTMA Final Group Project - Comparative NLP Analysis of Political Discourse on YouTube (Trump vs. Biden)
+**Description:**
+A comprehensive Data Science research project analyzing the linguistic patterns of sarcasm in overpolarized political discussions on YouTube. By implementing a deep learning pipeline centered on the roBERTa model, I quantified how sarcasm is utilized as a rhetorical tool across different political camps. The project integrates K-Means clustering for topic modeling and sentiment polarity detection to reveal how social media audiences express criticism and group affiliation through irony and satire.
+
+**Respository:** [biden_trump_sarcasm_project](./biden_trump_sarcasm_project)
+
 ## Future Plans
 - Add more data analysis/data pipeline projects
 - Expand portfolio with end-to-end analytics workflows
@@ -75,6 +81,7 @@ This project implements a transformer-based chess player for a tournament framew
 ## License
 
 MIT License
+
 
 
 
