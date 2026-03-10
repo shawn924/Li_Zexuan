@@ -55,7 +55,7 @@ A comprehensive text clustering project analyzing 5000 IMDb movie reviews. We ap
 
 ### 5. INFOMTALC Midterm Assignment - Transformer Chess Player
 **Description:**
-This project implements a transformer-based chess player for a tournament framework, where the agent generates moves from FEN positions using a pre-trained language model SmolLM2 fine-tuned specifically on chess games. The model, shawnno/chess-smollm2, was trained on datasets from Lichess and Stockfish engine generated games which contains more than 150k records formatted as FEN-to-move pairs with special tokens <|fen|> and <|move|> .
+This project implements a transformer-based chess player for a tournament framework, where the agent generates moves from FEN positions using a pre-trained language model SmolLM2 fine-tuned specifically on chess games. The model, [shawnno/chess-smollm2](https://huggingface.co/Shawnno/chess-smollm2), was trained on datasets from Lichess and Stockfish engine generated games which contains more than 150k records formatted as FEN-to-move pairs with special tokens <|fen|> and <|move|> .
 
 **Respository:** [INFOMTALC_Assignment1_chessbot](./INFOMTALC_Assignment1_chessbot)
 
@@ -66,6 +66,7 @@ This project implements a transformer-based chess player for a tournament framew
 ## License
 
 MIT License
+
 
 
 
