@@ -1,0 +1,230 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.19.2"
+  },
+  "cells": [
+    {
+      "id": "vblA",
+      "code_hash": "5e1f1591f26657fc5dad7bf9d0a2bfab",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">2a.Was this influence intermittent or did it have a gradual rise?</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "3b169f6ae83ce2b04ebfa9951b47c602",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">2b.What genres and top artists have been most influenced by Oceanus Folk?</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "381e1925f0de10fdee12d6064f4a7467",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1a-who-has-sailor-shift-been-most-influenced-by-over-time\">Task 1a \u2014 Who has Sailor Shift been most influenced by over time?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "381e1925f0de10fdee12d6064f4a7467",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1a-who-has-sailor-shift-been-most-influenced-by-over-time\">Task 1a \u2014 Who has Sailor Shift been most influenced by over time?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aLJB",
+      "code_hash": "068ce5b1582d8eb5baded8446c9d1d67",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1b-who-has-sailor-shift-collaborated-with-and-directly-or-indirectly-influenced\">Task 1b \u2014 Who has Sailor Shift collaborated with and directly or indirectly influenced?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "wlCL",
+      "code_hash": "4a9695b88e0bd448ff3d2fa4bf346bcb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1c-how-has-sailor-shift-influenced-collaborators-and-the-broader-oceanus-folk-community\">Task 1c \u2014 How has Sailor Shift influenced collaborators and the broader Oceanus Folk community?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hbol",
+      "code_hash": "c01159d86ce98dc8081980cd8ec9f38a",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "183641ee90e5c5b602ff32acaa67d124",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "c08a5fee3c3881d18110f1ecbbe51492",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "477cb9846777662f135c02722117a82d",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "1989e5974e47e9f53538438dca1c9663",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "9083d7f05599943fd54680ef60559c75",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "3df48029c8f59e83f36aafe3acbe7b9c",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "54a03b99ad643cbd75568a6c3d3c6b9c",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "2792b1a6873b232227f7c7a69808c530",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "54a03b99ad643cbd75568a6c3d3c6b9c",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "2e8628a8d58e69eb43a1432c94bb18f6",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "bbd96b3fb4a5084ce03c9390c7d76ae2",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "0e1f8e5f751699fa1f1e7bd744a9cf65",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "574f755511a999024a997624fd1769fd",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "b016878b73e3402c717542a5b8745e1a",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Pvdt",
+      "code_hash": "4275c6a0388126204fc4406d82042b49",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "xXTn",
+      "code_hash": "06fd359966fecd7d15413b257eeb3406",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "pHFh",
+      "code_hash": "143a2f94cc5d8ec3d667ef27205b80e4",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "aqbW",
+      "code_hash": "3830acf8e51d9040d3dfb2278082a5ed",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "TRpd",
+      "code_hash": "762d3011a1b549f1c92b028ee75570ee",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "wAgl",
+      "code_hash": "9fdf8d742836f211dcec6c393838e73b",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "rEll",
+      "code_hash": "691b0510e923240546b6262745c48ad1",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "SdmI",
+      "code_hash": "cc8078a1a47c5f7bf92524218969f458",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "yOPj",
+      "code_hash": "ce953ac11718fd86b3287cb5a3b1cce6",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

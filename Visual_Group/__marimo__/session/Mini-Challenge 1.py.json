@@ -1,0 +1,134 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.19.2"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "f5d33890f30aeccd83c615b4f29598e9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Nodes: 17,412\nEdges: 37,857\n\nDataFrame columns: ['node_id', 'Node Type', 'name', 'single', 'release_date', 'genre', 'notable', 'written_date', 'stage_name', 'notoriety_date']\nedge shape: (37857, 3)\ncolumns: ['source', 'target', 'Edge Type']\n\nEdge Type\nPerformerOf           13587\nRecordedBy             3798\nComposerOf             3290\nProducerOf             3209\nDistributedBy          3013\n                      ...  \nInterpolatesFrom       1574\nLyricalReferenceTo     1496\nCoverOf                1429\nDirectlySamples         619\nMemberOf                568\nName: count, Length: 12, dtype: int64\n       node_id          name Node Type\n17255    17255  Sailor Shift    Person\n\nSailor connections: 60\nConnection types:\nEdge Type\nPerformerOf           26\nLyricistOf            21\nInStyleOf              4\nLyricalReferenceTo     3\nInterpolatesFrom       2\nDirectlySamples        2\nMemberOf               1\nProducerOf             1\nName: count, dtype: int64\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "26f2d5525ee197ceaaeff0fe1aa891b8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "\n1. Column name adjusted:\nnodes columns: ['node_id', 'node_type', 'name', 'single', 'release_date', 'genre', 'notable', 'written_date', 'stage_name', 'notoriety_date']\nedges columns: ['source', 'target', 'edge_type']\n\n2. Dealing time columns\nYears range: 1975 - 2040\n\n3. Dealing boolean\n notables: 4297\n singles: 2838\n\n4. Dealing categories\n\n5. Calculating degree\ndegree range: 1 - 224\n\n6. Calculating for artists\n\n7. Dealing missing\nRemain missing: 45521\n\n8. Standardization.\nstandardized: ['degree', 'collaboration_count', 'influence_out', 'influence_in']\n\n=== Sailor Shift ===\nDegree: 60\nCollabrations: 48.0\nInfluence others: 4.0\nInfluenced by others: 7.0\n\n9. Getting Sailor Shift ego network\nego network size: 43 nodes, 65 edges\n\nFinal shape:\nnodes: (17412, 45)\nedges: (37857, 3)\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "vblA",
+      "code_hash": "5e1f1591f26657fc5dad7bf9d0a2bfab",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">2a.Was this influence intermittent or did it have a gradual rise?</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "db8e9ef45087e1c23f63a92658612e40",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "==================================================\nOceanus Folk Dataset Overview\n==================================================\nTotal works: 305\nYear range: 1992 - 2040\nSongs: 235\nAlbums: 70\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ZMMi",
+      "code_hash": "ff649ed57241305137604c5dbd456453",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ZMMi-0' random-id='77e5ca25-a88b-8a83-9d79-ce002bcb15fc'><marimo-vega data-initial-value='{}' data-label='null' data-spec='{&quot;config&quot;:{&quot;view&quot;:{&quot;continuousWidth&quot;:300,&quot;continuousHeight&quot;:300}},&quot;vconcat&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/4282-68456-m6adrluF.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;area&quot;,&quot;opacity&quot;:0.8},&quot;encoding&quot;:{&quot;color&quot;:{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;title&quot;:&quot;Genre&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;opacity&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;param_eb806990fa87981b&quot;,&quot;value&quot;:1},&quot;value&quot;:0.2},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;title&quot;:&quot;Year&quot;,&quot;type&quot;:&quot;ordinal&quot;},{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;title&quot;:&quot;Genre&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;count&quot;,&quot;title&quot;:&quot;Count&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;axis&quot;:{&quot;labelAngle&quot;:-45},&quot;field&quot;:&quot;year&quot;,&quot;title&quot;:&quot;Year&quot;,&quot;type&quot;:&quot;ordinal&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;stack&quot;:&quot;zero&quot;,&quot;title&quot;:&quot;Works Influenced by Oceanus Folk&quot;,&quot;type&quot;:&quot;quantitative&quot;}},&quot;height&quot;:280,&quot;name&quot;:&quot;view_c63066e35fa8d3a8_0&quot;,&quot;title&quot;:&quot;Spread of Oceanus Folk Influence Over Time by Genre&quot;,&quot;width&quot;:620},{&quot;hconcat&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2642-68456-32erLQOb.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;},&quot;encoding&quot;:{&quot;color&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;param_eb806990fa87981b&quot;,&quot;field&quot;:&quot;genre_grouped&quot;,&quot;legend&quot;:null,&quot;type&quot;:&quot;nominal&quot;},&quot;value&quot;:&quot;lightgray&quot;},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;genre&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;count&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;title&quot;:&quot;Number of Works&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;genre&quot;,&quot;sort&quot;:&quot;-x&quot;,&quot;title&quot;:&quot;Genre&quot;,&quot;type&quot;:&quot;nominal&quot;}},&quot;height&quot;:280,&quot;title&quot;:&quot;Genres Most Influenced by Oceanus Folk&quot;,&quot;width&quot;:400},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/3914-68456-mtMvb8Uj.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;},&quot;encoding&quot;:{&quot;color&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;param_eb806990fa87981b&quot;,&quot;field&quot;:&quot;genre_grouped&quot;,&quot;legend&quot;:null,&quot;type&quot;:&quot;nominal&quot;},&quot;value&quot;:&quot;lightgray&quot;},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;name&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;total&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;total&quot;,&quot;title&quot;:&quot;Times Influenced&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;name&quot;,&quot;sort&quot;:&quot;-x&quot;,&quot;title&quot;:&quot;Artist&quot;,&quot;type&quot;:&quot;nominal&quot;}},&quot;height&quot;:280,&quot;title&quot;:&quot;Top Artists Influenced by Oceanus Folk&quot;,&quot;width&quot;:400}]}],&quot;params&quot;:[{&quot;name&quot;:&quot;param_eb806990fa87981b&quot;,&quot;select&quot;:{&quot;type&quot;:&quot;point&quot;,&quot;fields&quot;:[&quot;genre_grouped&quot;]},&quot;views&quot;:[&quot;view_c63066e35fa8d3a8_0&quot;]}],&quot;&#36;schema&quot;:&quot;https://vega.github.io/schema/vega-lite/v6.1.0.json&quot;}' data-chart-selection='false' data-field-selection='true' data-embed-options='{}'></marimo-vega></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "C:\\Users\\leeze\\AppData\\Local\\Temp\\marimo_49472\\__marimo__cell_ZMMi_.py:61: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.\n  lnk_artist_grouped = lnk_artist_df.groupby('genre_grouped').apply(\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "c321a348961da8236ab58f7a43fffaa2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='RGSE-0' random-id='2a97689a-7552-d9bb-9115-6fe621cea11b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Alternative Rock&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Darkwave&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Desert Rock&#92;&quot;,&#92;&quot;count&#92;&quot;:10},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Dream Pop&#92;&quot;,&#92;&quot;count&#92;&quot;:8},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Emo/Pop Punk&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Indie Folk&#92;&quot;,&#92;&quot;count&#92;&quot;:8},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Indie Rock&#92;&quot;,&#92;&quot;count&#92;&quot;:2},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Jazz Surf Rock&#92;&quot;,&#92;&quot;count&#92;&quot;:3},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Post-Apocalyptic Folk&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;period&#92;&quot;:&#92;&quot;After 2028&#92;&quot;,&#92;&quot;genre&#92;&quot;:&#92;&quot;Space Rock&#92;&quot;,&#92;&quot;count&#92;&quot;:2}]&quot;' data-total-rows='27' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;period&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;genre&quot;,[&quot;string&quot;,&quot;object&quot;]],[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "         period             genre  count\n19  Before 2028         Dream Pop     21\n20  Before 2028        Indie Folk     20\n24  Before 2028        Space Rock     15\n17  Before 2028       Desert Rock     14\n2    After 2028       Desert Rock     10\n..          ...               ...    ...\n6    After 2028        Indie Rock      2\n9    After 2028        Space Rock      2\n11   After 2028   Symphonic Metal      2\n0    After 2028  Alternative Rock      1\n10   After 2028       Speed Metal      1\n\n[20 rows x 3 columns]\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "088c21061b9452877e739b45024b3ba4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/vnd.vegalite.v5+json": "{\n  \"$schema\": \"https://vega.github.io/schema/vega-lite/v6.1.0.json\",\n  \"config\": {\n    \"view\": {\n      \"continuousHeight\": 300,\n      \"continuousWidth\": 300\n    }\n  },\n  \"data\": {\n    \"name\": \"data-4a1dec7765cca70c17d50ad25fb131ed\"\n  },\n  \"datasets\": {\n    \"data-4a1dec7765cca70c17d50ad25fb131ed\": [\n      {\n        \"count\": 10,\n        \"genre\": \"Desert Rock\",\n        \"period\": \"After 2028\"\n      },\n      {\n        \"count\": 8,\n        \"genre\": \"Dream Pop\",\n        \"period\": \"After 2028\"\n      },\n      {\n        \"count\": 8,\n        \"genre\": \"Indie Folk\",\n        \"period\": \"After 2028\"\n      },\n      {\n        \"count\": 2,\n        \"genre\": \"Space Rock\",\n        \"period\": \"After 2028\"\n      },\n      {\n        \"count\": 4,\n        \"genre\": \"Synthwave\",\n        \"period\": \"After 2028\"\n      },\n      {\n        \"count\": 10,\n        \"genre\": \"Americana\",\n        \"period\": \"Before 2028\"\n      },\n      {\n        \"count\": 14,\n        \"genre\": \"Desert Rock\",\n        \"period\": \"Before 2028\"\n      },\n      {\n        \"count\": 21,\n        \"genre\": \"Dream Pop\",\n        \"period\": \"Before 2028\"\n      },\n      {\n        \"count\": 20,\n        \"genre\": \"Indie Folk\",\n        \"period\": \"Before 2028\"\n      },\n      {\n        \"count\": 15,\n        \"genre\": \"Space Rock\",\n        \"period\": \"Before 2028\"\n      },\n      {\n        \"count\": 7,\n        \"genre\": \"Synthwave\",\n        \"period\": \"Before 2028\"\n      }\n    ]\n  },\n  \"encoding\": {\n    \"color\": {\n      \"field\": \"period\",\n      \"scale\": {\n        \"domain\": [\n          \"Before 2028\",\n          \"After 2028\"\n        ],\n        \"range\": [\n          \"#aec7e8\",\n          \"#1f77b4\"\n        ]\n      },\n      \"title\": \"Period\",\n      \"type\": \"nominal\"\n    },\n    \"tooltip\": [\n      {\n        \"field\": \"genre\",\n        \"type\": \"nominal\"\n      },\n      {\n        \"field\": \"period\",\n        \"type\": \"nominal\"\n      },\n      {\n        \"field\": \"count\",\n        \"type\": \"quantitative\"\n      }\n    ],\n    \"x\": {\n      \"field\": \"count\",\n      \"title\": \"Number of Works\",\n      \"type\": \"quantitative\"\n    },\n    \"xOffset\": {\n      \"field\": \"period\",\n      \"type\": \"nominal\"\n    },\n    \"y\": {\n      \"field\": \"genre\",\n      \"sort\": \"-x\",\n      \"title\": \"Genre\",\n      \"type\": \"nominal\"\n    }\n  },\n  \"height\": 350,\n  \"mark\": {\n    \"type\": \"bar\"\n  },\n  \"title\": \"Genres Inspiring Oceanus Folk: Before vs After Sailor's Breakthrough\",\n  \"usermeta\": {\n    \"embedOptions\": {}\n  },\n  \"width\": 500\n}"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

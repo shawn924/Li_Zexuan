@@ -1,0 +1,366 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.19.2"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "7d738674a97e91ff78dd8a42764a0f02",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"sailor-shift-music-network-analysis\">Sailor Shift \u2014 Music Network Analysis</h1>\n<h2 id=\"setup\">Setup</h2>\n<span class=\"paragraph\">Load the knowledge graph, build node/edge DataFrames, and locate Sailor Shift.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "33acb5aa59f8fb6815f590ea9d368f96",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Sailor Shift node ID: 17255\nGraph: 17,412 nodes, 37,857 edges\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "vblA",
+      "code_hash": "194a44240533457210e922e64bcc529c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"preprocessing\">Preprocessing</h2>\n<span class=\"paragraph\">Standardise column names, parse dates, fill missing values, compute degree and\ncollaboration/influence metrics for every node, and extract Sailor Shift's ego network.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "4bc1923d571fdc0cd2579d7b7c45cfb2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Nodes: 17,412  |  Edges: 37,857\nEgo network: 43 nodes, 65 edges\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "lEQa",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "5ed082602a02576a304e55c7dd00ed6c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1a-who-has-sailor-shift-been-most-influenced-by-over-time\">Task 1a \u2014 Who has Sailor Shift been most influenced by over time?</h2>\n<span class=\"paragraph\">For each work Sailor released, we trace which external works she drew from\n(via InStyleOf, CoverOf, DirectlySamples, InterpolatesFrom, LyricalReferenceTo),\nand look at the genre, influence type, and age of those sources.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "220d045d9ecd977c562c2c0bb6d6f309",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "0ecd034f75058a52b0180c90a22a5913",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "92fef2874c69941c2bfc27dd4fd570b0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1b-who-has-sailor-shift-collaborated-with-and-directly-or-indirectly-influenced\">Task 1b \u2014 Who has Sailor Shift collaborated with and directly or indirectly influenced?</h2>\n<span class=\"paragraph\">We identify artists who share credits on Sailor's works (collaborators), then trace\nwhich artists' works reference Sailor's output directly (1 hop) or indirectly (2 hops).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "8dc8872caee285f15c2459916c748d75",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "2208b41e8fe6a2e196731696b7b26fee",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "64d08a4f87f24b4f22d21dab25aae941",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-1c-how-has-sailor-shift-influenced-the-broader-oceanus-folk-community\">Task 1c \u2014 How has Sailor Shift influenced the broader Oceanus Folk community?</h2>\n<span class=\"paragraph\">We look at three questions the data can answer:</span>\n<ul>\n<li>Did the OF community grow after Sailor's 2028 breakthrough, and are new OF artists connected to her network?</li>\n<li>Within the OF internal citation network, are Sailor's collaborators' works the most referenced?</li>\n<li>What is the Ivy Echoes legacy \u2014 the band Sailor formed?</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "14a7647821e91d9eb4ad115074967460",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "0ac6eac0a5eb0eb6dcbbc7ff72d04522",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "897fd84445ee0ab7e200dd0fa8e63f01",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-2a-was-this-influence-intermittent-or-did-it-have-a-gradual-rise\">Task 2a \u2014 Was this influence intermittent or did it have a gradual rise?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "7a7143a2629d297a4510705e16c7a49a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Oceanus Folk works: 305\nInfluence types: ['InStyleOf', 'CoverOf', 'DirectlySamples', 'InterpolatesFrom', 'LyricalReferenceTo']\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "60f8781ef49ab80307583d6a25629bfb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Vxnm-0' random-id='52f66777-d944-ac0d-bcd7-be19392dbb57'><marimo-vega data-initial-value='{}' data-label='null' data-spec='{&quot;config&quot;:{&quot;view&quot;:{&quot;continuousWidth&quot;:300,&quot;continuousHeight&quot;:300}},&quot;hconcat&quot;:[{&quot;layer&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/3154-20088-jVmukd1u.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;line&quot;,&quot;color&quot;:&quot;#e07b39&quot;,&quot;point&quot;:{&quot;fill&quot;:&quot;white&quot;,&quot;filled&quot;:true,&quot;size&quot;:60},&quot;strokeWidth&quot;:3},&quot;encoding&quot;:{&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;axis&quot;:{&quot;format&quot;:&quot;d&quot;},&quot;field&quot;:&quot;year&quot;,&quot;title&quot;:&quot;Year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;cumulative&quot;,&quot;title&quot;:&quot;Cumulative Works Influenced&quot;,&quot;type&quot;:&quot;quantitative&quot;}},&quot;title&quot;:&quot;Cumulative Growth of Oceanus Folk Influence&quot;},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/1474-20088-fRzUfJzb.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;rule&quot;,&quot;color&quot;:&quot;#e07b39&quot;,&quot;strokeDash&quot;:[5,5],&quot;strokeWidth&quot;:2},&quot;encoding&quot;:{&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/1474-20088-yXcdshF1.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;rule&quot;,&quot;color&quot;:&quot;red&quot;,&quot;strokeDash&quot;:[5,5],&quot;strokeWidth&quot;:2},&quot;encoding&quot;:{&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2306-20088-pkBaY6ok.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;text&quot;,&quot;align&quot;:&quot;right&quot;,&quot;baseline&quot;:&quot;bottom&quot;,&quot;color&quot;:&quot;#e07b39&quot;,&quot;dx&quot;:-10,&quot;dy&quot;:-5,&quot;fontSize&quot;:11,&quot;fontWeight&quot;:&quot;bold&quot;},&quot;encoding&quot;:{&quot;text&quot;:{&quot;field&quot;:&quot;text&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2306-20088-uSY66tyk.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;text&quot;,&quot;align&quot;:&quot;left&quot;,&quot;baseline&quot;:&quot;top&quot;,&quot;color&quot;:&quot;red&quot;,&quot;dx&quot;:10,&quot;dy&quot;:-10,&quot;fontSize&quot;:11},&quot;encoding&quot;:{&quot;text&quot;:{&quot;field&quot;:&quot;text&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}}}],&quot;height&quot;:400,&quot;width&quot;:600},{&quot;layer&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/3466-20088-RKmJKNIb.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;,&quot;color&quot;:&quot;#d3d3d3&quot;},&quot;encoding&quot;:{&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;axis&quot;:{&quot;format&quot;:&quot;d&quot;},&quot;field&quot;:&quot;year&quot;,&quot;title&quot;:&quot;Year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;new_works&quot;,&quot;title&quot;:&quot;New Works Influenced per Year&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2602-20088-kTN6vYSp.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;,&quot;color&quot;:&quot;#e07b39&quot;,&quot;stroke&quot;:&quot;black&quot;,&quot;strokeWidth&quot;:1},&quot;encoding&quot;:{&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2698-20088-otzcKaDs.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;,&quot;color&quot;:&quot;#f0b27a&quot;},&quot;encoding&quot;:{&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2602-20088-jSq6lT44.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;,&quot;color&quot;:&quot;#ff6b6b&quot;},&quot;encoding&quot;:{&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2666-20088-E8ehPg7U.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;,&quot;color&quot;:&quot;#e07b39&quot;,&quot;opacity&quot;:0.7},&quot;encoding&quot;:{&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;cumulative&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;new_works&quot;,&quot;type&quot;:&quot;quantitative&quot;}}}],&quot;height&quot;:400,&quot;title&quot;:&quot;Annual New Works Influenced by Oceanus Folk (Burst-Driven Pattern)&quot;,&quot;width&quot;:600}],&quot;&#36;schema&quot;:&quot;https://vega.github.io/schema/vega-lite/v6.1.0.json&quot;}' data-chart-selection='true' data-field-selection='true' data-embed-options='{}'></marimo-vega></marimo-ui-element><marimo-callout-output data-html='&quot;&lt;span class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&gt;&lt;span class=&#92;&quot;paragraph&#92;&quot;&gt;&lt;strong&gt;Key finding:&lt;/strong&gt; Oceanus Folk&#x27;s influence follows an &lt;strong&gt;intermittent, burst-driven pattern&lt;/strong&gt; rather than a gradual rise.&lt;/span&gt;&#92;n&lt;h3 id=&#92;&quot;evidence-for-this-pattern&#92;&quot;&gt;Evidence for this Pattern:&lt;/h3&gt;&#92;n&lt;ul&gt;&#92;n&lt;li&gt;&lt;strong&gt;1980-2005:&lt;/strong&gt; Nearly horizontal cumulative curve with minimal annual activity&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;Peak burst in 2023:&lt;/strong&gt; 25 works influenced in a single year\u2014the genre&#x27;s largest impact&lt;/li&gt;&#92;n&lt;li&gt;The cumulative curve shows clear step-like increases during burst years&lt;/li&gt;&#92;n&lt;li&gt;Other distinct bursts visible around 2010, 2017, and 2028&lt;/li&gt;&#92;n&lt;/ul&gt;&#92;n&lt;h3 id=&#92;&quot;conclusion&#92;&quot;&gt;Conclusion:&lt;/h3&gt;&#92;n&lt;span class=&#92;&quot;paragraph&#92;&quot;&gt;This pattern definitively rejects the hypothesis of a smooth or gradual rise. Instead, the genre&#x27;s &#92;nexpansion was triggered by specific cultural moments or influential releases, with the 2023 burst &#92;nrepresenting the maximum cross-genre impact\u2014occurring five years before Sailor Shift&#x27;s 2028 breakthrough.&lt;/span&gt;&lt;/span&gt;&quot;' data-kind='&quot;info&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "============================================================\nTASK 2.3.1: INFLUENCE GROWTH PATTERN ANALYSIS\n============================================================\nTotal unique works influenced: 185\nYear range: 1981 - 2031\nPeak influence year: 2023 with 25 works\nBefore 2023 avg: 4.3 works/year\nAfter 2023 avg: 4.9 works/year\n\nYearly breakdown:\n year  new_works  cumulative\n 1981          1           1\n 1983          1           2\n 1991          2           4\n 1992          1           5\n 1994          1           6\n 1995          1           7\n 1997          5          12\n 1998          1          13\n 1999          1          14\n 2000          2          16\n 2003          2          18\n 2004          9          27\n 2005          1          28\n 2007          6          34\n 2008          1          35\n 2009          3          38\n 2010         14          52\n 2012          2          54\n 2013         17          71\n 2014          4          75\n 2015          1          76\n 2016          3          79\n 2017         20          99\n 2018          2         101\n 2019          2         103\n 2020         10         113\n 2021          3         116\n 2022          5         121\n 2023         25         146\n 2024         10         156\n 2025          3         159\n 2026         12         171\n 2027          1         172\n 2028          6         178\n 2029          3         181\n 2030          3         184\n 2031          1         185\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "850eed3320b7237e7b8219d59783128b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-2b-what-genres-and-top-artists-have-been-most-influenced-by-oceanus-folk\">Task 2b What genres and top artists have been most influenced by Oceanus Folk?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "93aef825cb3af6e739026005e22319b1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='ulZA-1' random-id='f9501481-767b-4a05-45fd-e7dfa5c8eb66'><marimo-vega data-initial-value='{}' data-label='null' data-spec='{&quot;config&quot;:{&quot;view&quot;:{&quot;continuousWidth&quot;:300,&quot;continuousHeight&quot;:300}},&quot;hconcat&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/1618-20088-CTmuLxM4.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;rect&quot;},&quot;encoding&quot;:{&quot;color&quot;:{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;scale&quot;:{&quot;scheme&quot;:&quot;tableau10&quot;},&quot;title&quot;:&quot;Legend&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;opacity&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;selector_task2_q2&quot;,&quot;value&quot;:1},&quot;value&quot;:0.3},&quot;y&quot;:{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;title&quot;:&quot;Click to filter genres&quot;,&quot;type&quot;:&quot;nominal&quot;}},&quot;height&quot;:280,&quot;name&quot;:&quot;view_d55927e45a00c08e_0&quot;,&quot;width&quot;:100},{&quot;vconcat&quot;:[{&quot;layer&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/4618-20088-3YEXY0ON.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;area&quot;,&quot;opacity&quot;:0.8},&quot;encoding&quot;:{&quot;color&quot;:{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;legend&quot;:null,&quot;scale&quot;:{&quot;scheme&quot;:&quot;tableau10&quot;},&quot;type&quot;:&quot;nominal&quot;},&quot;opacity&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;selector_task2_q2&quot;,&quot;value&quot;:1},&quot;value&quot;:0.2},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;count&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;axis&quot;:{&quot;format&quot;:&quot;d&quot;},&quot;field&quot;:&quot;year&quot;,&quot;title&quot;:&quot;Year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;stack&quot;:&quot;zero&quot;,&quot;title&quot;:&quot;Works Influenced&quot;,&quot;type&quot;:&quot;quantitative&quot;}},&quot;name&quot;:&quot;view_89670a611f17211c_0&quot;},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/1474-20088-mRgJgM3V.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;rule&quot;,&quot;color&quot;:&quot;red&quot;,&quot;strokeDash&quot;:[5,5],&quot;strokeWidth&quot;:2},&quot;encoding&quot;:{&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2266-20088-3UciAYnp.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;text&quot;,&quot;align&quot;:&quot;right&quot;,&quot;baseline&quot;:&quot;bottom&quot;,&quot;color&quot;:&quot;#e07b39&quot;,&quot;dx&quot;:-10,&quot;dy&quot;:-10,&quot;fontSize&quot;:10},&quot;encoding&quot;:{&quot;text&quot;:{&quot;field&quot;:&quot;text&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;type&quot;:&quot;quantitative&quot;}}},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2274-20088-6cvyje7t.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;text&quot;,&quot;align&quot;:&quot;left&quot;,&quot;baseline&quot;:&quot;top&quot;,&quot;color&quot;:&quot;red&quot;,&quot;dx&quot;:10,&quot;dy&quot;:-5,&quot;fontSize&quot;:11},&quot;encoding&quot;:{&quot;text&quot;:{&quot;field&quot;:&quot;text&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;x&quot;:{&quot;field&quot;:&quot;year&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;type&quot;:&quot;quantitative&quot;}}}],&quot;height&quot;:280,&quot;width&quot;:500},{&quot;hconcat&quot;:[{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/2658-20088-DlkKt1lR.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;},&quot;encoding&quot;:{&quot;color&quot;:{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;legend&quot;:null,&quot;scale&quot;:{&quot;scheme&quot;:&quot;tableau10&quot;},&quot;type&quot;:&quot;nominal&quot;},&quot;opacity&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;selector_task2_q2&quot;,&quot;value&quot;:1},&quot;value&quot;:0.2},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;genre&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;count&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;title&quot;:&quot;Number of Works&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;genre&quot;,&quot;sort&quot;:&quot;-x&quot;,&quot;title&quot;:&quot;Genre&quot;,&quot;type&quot;:&quot;nominal&quot;}},&quot;height&quot;:280,&quot;name&quot;:&quot;view_9b1457091320c00f_0&quot;,&quot;width&quot;:400},{&quot;data&quot;:{&quot;url&quot;:&quot;./@file/4098-20088-71JKy4Cf.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;},&quot;encoding&quot;:{&quot;color&quot;:{&quot;field&quot;:&quot;genre_grouped&quot;,&quot;legend&quot;:null,&quot;scale&quot;:{&quot;scheme&quot;:&quot;tableau10&quot;},&quot;type&quot;:&quot;nominal&quot;},&quot;opacity&quot;:{&quot;condition&quot;:{&quot;param&quot;:&quot;selector_task2_q2&quot;,&quot;value&quot;:1},&quot;value&quot;:0.2},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;name&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;main_genre&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;total&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;total&quot;,&quot;title&quot;:&quot;Number of Influenced Works&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;name&quot;,&quot;sort&quot;:&quot;-x&quot;,&quot;title&quot;:&quot;Artist&quot;,&quot;type&quot;:&quot;nominal&quot;}},&quot;height&quot;:280,&quot;name&quot;:&quot;view_a236c49a4f574520_1&quot;,&quot;width&quot;:400}]}]}],&quot;params&quot;:[{&quot;name&quot;:&quot;selector_task2_q2&quot;,&quot;select&quot;:{&quot;type&quot;:&quot;point&quot;,&quot;fields&quot;:[&quot;genre_grouped&quot;]},&quot;views&quot;:[&quot;view_d55927e45a00c08e_0&quot;,&quot;view_89670a611f17211c_0&quot;,&quot;view_9b1457091320c00f_0&quot;,&quot;view_a236c49a4f574520_1&quot;]}],&quot;&#36;schema&quot;:&quot;https://vega.github.io/schema/vega-lite/v6.1.0.json&quot;}' data-chart-selection='false' data-field-selection='true' data-embed-options='{}'></marimo-vega></marimo-ui-element><marimo-callout-output data-html='&quot;&lt;span class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&gt;&lt;span class=&#92;&quot;paragraph&#92;&quot;&gt;&lt;strong&gt;Key finding:&lt;/strong&gt; Oceanus Folk&#x27;s influence is both &lt;strong&gt;deep and broad&lt;/strong&gt;, reaching beyond its home genre into diverse musical territories.&lt;/span&gt;&#92;n&lt;h3 id=&#92;&quot;most-influenced-genres&#92;&quot;&gt;Most Influenced Genres:&lt;/h3&gt;&#92;n&lt;ul&gt;&#92;n&lt;li&gt;&lt;strong&gt;Indie Folk (22 works):&lt;/strong&gt; The most heavily impacted specific genre, confirming Oceanus Folk as a foundational pillar within the modern folk movement&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;Synthwave (17 works):&lt;/strong&gt; Significant influence in atmospheric and electronic-leaning styles, suggesting Oceanus Folk&#x27;s textures are highly compatible with modern production&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;Dream Pop (15 works):&lt;/strong&gt; Strong presence in ethereal, effects-driven styles&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;&#92;&quot;Other&#92;&quot; category (24 works):&lt;/strong&gt; The largest total group, indicating a wide &#92;&quot;long-tail&#92;&quot; distribution across numerous niche sub-genres&lt;/li&gt;&#92;n&lt;/ul&gt;&#92;n&lt;h3 id=&#92;&quot;most-influenced-artists&#92;&quot;&gt;Most Influenced Artists:&lt;/h3&gt;&#92;n&lt;ul&gt;&#92;n&lt;li&gt;&lt;strong&gt;Stephen Meyer (3 works):&lt;/strong&gt; The most influenced individual artist, with 3 distinct works directly attributed to Oceanus Folk&#x27;s influence&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;Dense secondary tier (2 works each):&lt;/strong&gt; Artists including Guiying Liao, Yan Zou, Tao Hu, and Jun Zhou demonstrate that influence is decentralized and widespread&lt;/li&gt;&#92;n&lt;/ul&gt;&#92;n&lt;h3 id=&#92;&quot;conclusion&#92;&quot;&gt;Conclusion:&lt;/h3&gt;&#92;n&lt;span class=&#92;&quot;paragraph&#92;&quot;&gt;The influence of Oceanus Folk is both deep (concentrated in Indie Folk) and broad (extending into Synthwave and Dream Pop). The widespread impact across a diverse range of artists proves that the genre has successfully transitioned from a niche style into a versatile source of inspiration for both mainstream and experimental creators.&lt;/span&gt;&lt;/span&gt;&quot;' data-kind='&quot;info&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Peak year: 2023, Peak value: 17 works\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ecfG",
+      "code_hash": "44f4c3d63df2e7d5cf755c517411a9d3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-2c-how-has-oceanus-folk-changed-with-the-rise-of-sailor-shift-from-which-genres-does-it-draw-most-of-its-contemporary-inspiration\">Task 2c.  How has Oceanus Folk changed with the rise of Sailor Shift? From which genres does it draw most of its contemporary inspiration?</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "oVnb",
+      "code_hash": "29600ab24a81e552836f498e2420c2f0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='oVnb-0' random-id='7319321a-efd0-da01-519b-80fadf4f443d'><marimo-vega data-initial-value='{}' data-label='null' data-spec='{&quot;config&quot;:{&quot;view&quot;:{&quot;continuousWidth&quot;:300,&quot;continuousHeight&quot;:300}},&quot;data&quot;:{&quot;url&quot;:&quot;./@file/3058-20088-UxZhcbYk.arrow&quot;,&quot;format&quot;:{&quot;type&quot;:&quot;arrow&quot;}},&quot;mark&quot;:{&quot;type&quot;:&quot;bar&quot;},&quot;encoding&quot;:{&quot;color&quot;:{&quot;field&quot;:&quot;period&quot;,&quot;scale&quot;:{&quot;domain&quot;:[&quot;Before 2028&quot;,&quot;After 2028&quot;],&quot;range&quot;:[&quot;#aec7e8&quot;,&quot;#1f77b4&quot;]},&quot;title&quot;:&quot;Period&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;tooltip&quot;:[{&quot;field&quot;:&quot;genre&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;period&quot;,&quot;type&quot;:&quot;nominal&quot;},{&quot;field&quot;:&quot;count&quot;,&quot;type&quot;:&quot;quantitative&quot;}],&quot;x&quot;:{&quot;field&quot;:&quot;count&quot;,&quot;title&quot;:&quot;Number of Works&quot;,&quot;type&quot;:&quot;quantitative&quot;},&quot;xOffset&quot;:{&quot;field&quot;:&quot;period&quot;,&quot;type&quot;:&quot;nominal&quot;},&quot;y&quot;:{&quot;field&quot;:&quot;genre&quot;,&quot;sort&quot;:&quot;-x&quot;,&quot;title&quot;:&quot;Genre&quot;,&quot;type&quot;:&quot;nominal&quot;}},&quot;height&quot;:350,&quot;title&quot;:&quot;Genres Influencing Oceanus Folk: Before vs. After Sailor Shift&#x27;s Breakthrough&quot;,&quot;width&quot;:500,&quot;&#36;schema&quot;:&quot;https://vega.github.io/schema/vega-lite/v6.1.0.json&quot;}' data-chart-selection='true' data-field-selection='true' data-embed-options='{}'></marimo-vega></marimo-ui-element><marimo-callout-output data-html='&quot;&lt;span class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&gt;&lt;span class=&#92;&quot;paragraph&#92;&quot;&gt;&lt;strong&gt;Key finding:&lt;/strong&gt; With Sailor Shift&#x27;s breakthrough, Oceanus Folk took a new direction\u2014away from its traditional roots and toward a modern, atmospheric style.&lt;/span&gt;&#92;n&lt;h3 id=&#92;&quot;the-disappearance-of-americana&#92;&quot;&gt;The Disappearance of Americana&lt;/h3&gt;&#92;n&lt;ul&gt;&#92;n&lt;li&gt;&lt;strong&gt;Before 2028:&lt;/strong&gt; Americana contributed &lt;strong&gt;10 influence edges&lt;/strong&gt;&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;After 2028:&lt;/strong&gt; &lt;strong&gt;0 recorded influence&lt;/strong&gt; from Americana&lt;/li&gt;&#92;n&lt;/ul&gt;&#92;n&lt;h3 id=&#92;&quot;dream-pop-indie-folk-the-stable-pillars&#92;&quot;&gt;Dream Pop &amp;amp; Indie Folk: The Stable Pillars&lt;/h3&gt;&#92;n&lt;ul&gt;&#92;n&lt;li&gt;&lt;strong&gt;Dream Pop:&lt;/strong&gt; Grew from 21 to &lt;strong&gt;29 total works&lt;/strong&gt; (added 8 after 2028)&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;Indie Folk:&lt;/strong&gt; Grew from 20 to &lt;strong&gt;28 total works&lt;/strong&gt; (added 8 after 2028)&lt;/li&gt;&#92;n&lt;/ul&gt;&#92;n&lt;h3 id=&#92;&quot;emerging-textures-synthetic-cinematic&#92;&quot;&gt;Emerging Textures: Synthetic &amp;amp; Cinematic&lt;/h3&gt;&#92;n&lt;ul&gt;&#92;n&lt;li&gt;&lt;strong&gt;Synthwave&lt;/strong&gt; and &lt;strong&gt;Desert Rock&lt;/strong&gt; maintained steady influence after 2028&lt;/li&gt;&#92;n&lt;li&gt;&lt;strong&gt;Space Rock&lt;/strong&gt; showed consistent presence&lt;/li&gt;&#92;n&lt;/ul&gt;&#92;n&lt;h3 id=&#92;&quot;conclusion&#92;&quot;&gt;Conclusion:&lt;/h3&gt;&#92;n&lt;span class=&#92;&quot;paragraph&#92;&quot;&gt;After 2028, Oceanus Folk drew less from Americana and continued to rely on Dream Pop and Indie Folk. This shift in its own influences likely contributed to the stylistic evolution heard in works influenced by the genre during this period.&lt;/span&gt;&lt;/span&gt;&quot;' data-kind='&quot;info&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Edges where Oceanus Folk is influenced: 377\nUnique works influencing Oceanus Folk: 149\n\n============================================================\nGENRES INFLUENCING OCEANUS FOLK\n============================================================\n\nTop 10 influencing genres overall:\ngenre\nDream Pop         29\nIndie Folk        28\nDesert Rock       24\nSpace Rock        17\nSynthwave         11\nAmericana         10\nDoom Metal         7\nJazz Surf Rock     5\nSynthpop           4\nIndie Rock         3\nName: count, dtype: int64\n\n----------------------------------------\nBefore 2028 - Top 5 genres:\n      genre  count\n  Dream Pop     21\n Indie Folk     20\n Space Rock     15\nDesert Rock     14\n  Americana     10\n\nAfter 2028 - Top 5 genres:\n         genre  count\n   Desert Rock     10\n     Dream Pop      8\n    Indie Folk      8\n     Synthwave      4\nJazz Surf Rock      3\n\nTop 6 genres for visualization: ['Dream Pop', 'Indie Folk', 'Desert Rock', 'Space Rock', 'Synthwave', 'Americana']\nAmericana: Before 10, After 0\nDream Pop: Before 21, After 8\nIndie Folk: Before 20, After 8\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ZBYS",
+      "code_hash": "85d9cb0a0d225dbb2a0e8206b704dd7f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-3a-who-are-the-most-prominent-oceanus-folk-artists\">Task 3a \u2014 Who are the most prominent Oceanus Folk artists?</h2>\n<span class=\"paragraph\">We build an artist profile for every person in the graph by counting how many works\nthey performed, composed, produced and wrote lyrics for, plus how many bands they belong to.\nFrom that we derive a collaboration score and influence score, then plot activity,\npopularity and influence timelines for the top Oceanus Folk artists.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aLJB",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "nHfw",
+      "code_hash": "de56d1aa74cbeface0475852b8d54012",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "xXTn",
+      "code_hash": "3bc14b31e3b9c340a485d22ea9a17f1b",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "AjVT",
+      "code_hash": "dc32df7291cdb7643e4b995f99be63c7",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "pHFh",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "NCOB",
+      "code_hash": "4c6f19d5a54bfcb44df9f88afbe5cdd5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"task-3b-who-is-the-next-rising-star-in-oceanus-folk\">Task 3b \u2014 Who is the next rising star in Oceanus Folk?</h2>\n<span class=\"paragraph\">We focus on recent years (2030+) and rank artists by three dimensions:\nactivity (songs released), popularity (notable songs), and influence (works referencing theirs).\nWe then compute a growth score \u2014 recent activity minus older activity \u2014 to find\nwho is genuinely accelerating rather than just historically prolific.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "aqbW",
+      "code_hash": "7b719909e1a6059ebde710b5afbe0080",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "TRpd",
+      "code_hash": "b7d6031cb8ef73953cd0d976f36bf184",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "TXez",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    }
+  ]
+}
