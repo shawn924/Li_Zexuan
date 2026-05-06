@@ -18,6 +18,15 @@ This research develops a Cellular Automata (CA) model to simulate and forecast h
 
 **Repository:** [Spatial_Project_Cellular_Automata](./Spatial_Project_Cellular_Automata)
 
+### 3. E-commerce Precision Marketing & Growth Strategy: The RFM-I Optimization Framework
+**Description:** 
+This project addresses the "Inefficient Subsidy" challenge in e-commerce marketing by developing an enhanced RFM-I (Recency, Frequency, Monetary, Intent) user segmentation model.
+
+While traditional RFM models focus on historical value, this framework introduces Real-time Intent (I)—calculated from session duration and page depth—to identify "High-Intent Hesitators." These are users who are most sensitive to marketing nudges but are typically overlooked by backward-looking models.
+
+**Repository:** [Ecommerce_rfmproject](./Ecommerce_rfmproject)
+
+
 ## Courseworks
 
 ### 1. Infomwr Assignment 1 - database design and querying
@@ -59,6 +68,12 @@ This project implements a transformer-based chess player for a tournament framew
 
 **Respository:** [INFOMTALC_Assignment1_chessbot](./INFOMTALC_Assignment1_chessbot)
 
+### 6. INFOMTMA Final Group Project - Comparative NLP Analysis of Political Discourse on YouTube (Trump vs. Biden)
+**Description:**
+A comprehensive Data Science research project analyzing the linguistic patterns of sarcasm in overpolarized political discussions on YouTube. By implementing a deep learning pipeline centered on the roBERTa model, I quantified how sarcasm is utilized as a rhetorical tool across different political camps. The project integrates K-Means clustering for topic modeling and sentiment polarity detection to reveal how social media audiences express criticism and group affiliation through irony and satire.
+
+**Respository:** [biden_trump_sarcasm_project](./biden_trump_sarcasm_project)
+
 ## Future Plans
 - Add more data analysis/data pipeline projects
 - Expand portfolio with end-to-end analytics workflows
@@ -66,6 +81,9 @@ This project implements a transformer-based chess player for a tournament framew
 ## License
 
 MIT License
+
+
+
 
 
 
