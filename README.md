@@ -26,6 +26,18 @@ While traditional RFM models focus on historical value, this framework introduce
 
 **Repository:** [Ecommerce_rfmproject](./Ecommerce_rfmproject)
 
+### 4. Portfolio Risk Analysis – Three VaR Methods
+**Description:**
+A quantitative risk management project analyzing the "Magnificent Seven" tech stock portfolio (AAPL, MSFT, GOOGL, AMZN, META, NVDA, TSLA) using three Value-at-Risk (VaR) methodologies: Historical Simulation, Parametric (Variance-Covariance), and Monte Carlo Simulation. Features risk contribution decomposition per stock, rolling 252-day VaR tracking, Kupiec POF backtesting, and full visualization. All functions implemented from scratch in Python using NumPy, SciPy, and yfinance.
+
+**Repository:** [Risk_Project](./Risk_Project)
+
+### 5. Qwen2.5-1.5B Code Generator – QLoRA Fine-tuning
+**Description:**
+Fine-tuned Qwen/Qwen2.5-1.5B-Instruct with QLoRA (4-bit NF4) on 18K Python code generation instructions using a single RTX 4060 8G. After fine-tuning, the model shifted from verbose "educational" style to clean, production-ready engineering output — removing unnecessary comments and delivering directly usable code. Full training took under 2 hours.
+
+**Repository:** [LoRA](./LoRA)
+
 
 ## Courseworks
 
@@ -73,6 +85,18 @@ This project implements a transformer-based chess player for a tournament framew
 A comprehensive Data Science research project analyzing the linguistic patterns of sarcasm in overpolarized political discussions on YouTube. By implementing a deep learning pipeline centered on the roBERTa model, I quantified how sarcasm is utilized as a rhetorical tool across different political camps. The project integrates K-Means clustering for topic modeling and sentiment polarity detection to reveal how social media audiences express criticism and group affiliation through irony and satire.
 
 **Respository:** [biden_trump_sarcasm_project](./biden_trump_sarcasm_project)
+
+### 7. INFOMTALC Final Group Project - Crypto Forecasting: TFT vs TST for Multi-Asset Cryptocurrency
+**Description:**
+A comparison of Temporal Fusion Transformer (TFT) and Time Series Transformer (TST) for daily cryptocurrency price prediction using 260 crypto pairs, 38 features (technical indicators, sentiment, macro data), and probabilistic forecasting heads (quantile, Student's-t). TST outperformed TFT on all metrics; neither beat the random-walk baseline.
+
+**Repository:** [Crypto_TFT_vs_TST_Forecast](./Crypto_TFT_vs_TST_Forecast)
+
+### 8. INFOMVABD Final Group Project - Sailor Shift: Music Network Analysis
+**Description:**
+A group project analyzing the "Sailor Shift" music knowledge graph using NetworkX, Altair, and Marimo interactive notebooks. Built network visualizations to explore artist collaborations, musical influences, and genre connections, with multi-task mini-challenges covering graph metrics, community detection, and interactive dashboards.
+
+**Repository:** [Visual_Group](./Visual_Group)
 
 ## Future Plans
 - Add more data analysis/data pipeline projects
