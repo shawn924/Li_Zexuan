@@ -2,6 +2,8 @@
 
 Welcome to my data portfolio! This repository showcases my data skills using real-world datasets.
 
+**Personal Homepage:** [shawn924.github.io](https://shawn924.github.io/)
+
 ---
 
 ## Projects
